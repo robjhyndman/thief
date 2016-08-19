@@ -1,0 +1,19 @@
+Package: thief
+Version: 0.1
+Title: Temporal Hierarchical Forecasting
+Description: Methods and tools for generating forecasts at different temporal
+    frequencies using a hierarchical time series approach.
+Depends:
+    R (>= 3.0.2),
+    forecast (>= 7.1)
+Imports:
+    hts, TStools, ggplot2
+LazyData: yes
+ByteCompile: TRUE
+Authors@R: c(
+  person("Rob", "Hyndman", role=c("aut", "cre", "cph"), email="Rob.Hyndman@monash.edu"),
+  person("Nikolaos", "Kourentzes", role=c("aut","cph")))
+BugReports: https://github.com/robjhyndman/thief/issues
+License: GPL (>= 2)
+URL: http://github.com/robjhyndman/thief
+RoxygenNote: 5.0.1

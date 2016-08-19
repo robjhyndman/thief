@@ -1,4 +1,4 @@
-#thief
+#thief: Temporal HIErarchical Forecasting
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/robjhyndman/thief/pulls.svg?style=flat)](https://github.com/robjhyndman/thief/pulls)
 
 The R package *thief* provides methods and tools for generating forecasts at different temporal frequencies using a hierarchical time series approach.

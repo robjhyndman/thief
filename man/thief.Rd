@@ -6,7 +6,7 @@
 \usage{
 thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   "bu", "shr", "sam"), model = c("ets", "arima", "theta", "naive", "snaive"),
-  ...)
+  forecastfunction = NULL, ...)
 }
 \arguments{
 \item{y}{Time series input}
@@ -34,8 +34,12 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 }}
 
+\item{forecastfunction}{User-defined function to be used instead of \code{model}. The
+function must take a time series as the first argument, and the forecast horizon 
+as the second argument. It must return an object of class \code{forecast}.}
+
 \item{...}{Arguments to be passed to the time series modelling function 
-(such as \code{ets} or \code{auto.arima}).}
+(such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.}
 }
 \value{
 forecast object for bottom level series.
@@ -45,7 +49,7 @@ Takes a time series as input and produces forecasts using
 the temporal hierarchical approach of Athanasopoulos et al (2016).
 }
 \examples{
-  z <- thief(MAPA::admissions)
+  z <- thief(AEdemand[,12], model='arima')
   plot(z)
 
 }

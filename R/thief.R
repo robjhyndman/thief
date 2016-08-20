@@ -23,8 +23,11 @@
 #'   \item{"naive"}{random walk forecasts}
 #'   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 #' }
+#' @param forecastfunction User-defined function to be used instead of \code{model}. The
+#' function must take a time series as the first argument, and the forecast horizon 
+#' as the second argument. It must return an object of class \code{forecast}.
 #' @param ...   Arguments to be passed to the time series modelling function 
-#' (such as \code{ets} or \code{auto.arima}).
+#' (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.
 #'
 #' @return
 #'   forecast object for bottom level series.
@@ -39,11 +42,17 @@
 
 thief <- function(y, m=frequency(y), h=m*2,
                comb=c("struc","mse","ols","bu","shr","sam"),
-               model=c("ets","arima","theta","naive","snaive"), ...)
+               model=c("ets","arima","theta","naive","snaive"), 
+               forecastfunction=NULL, ...)
 {
-
   comb <- match.arg(comb)
   model <- match.arg(model)
+
+  # Check input is a univariate time series
+  if(!is.element("ts",class(y)))
+    stop("y must be a time series object")
+  if(NCOL(y) > 1L)
+    stop("y must be a univariate time series")
 
   # Make sure the time series is seasonal
   if(m <= 1L)
@@ -55,7 +64,8 @@ thief <- function(y, m=frequency(y), h=m*2,
   aggy <- tsaggregates(y=y, m=m, align='end')
 
   # Compute forecasts
-  frc <- th.forecast(aggy, h=h, m=m, model=model, ...)
+  frc <- th.forecast(aggy, h=h, m=m, model=model, 
+    forecastfunction=forecastfunction, ...)
 
   # Set up group matrix for hts
   nsum <- as.numeric(sub("AL","",rownames(frc$forecast)))
@@ -108,7 +118,7 @@ thief <- function(y, m=frequency(y), h=m*2,
 }
 
 #-------------------------------------------------
-th.forecast <- function(aggy, h=NULL, m, model, thr=3, ...)
+th.forecast <- function(aggy, h=NULL, m, model, forecastfunction, thr=3, ...)
 {
 # Produce forecasts for multiple temporal aggregation levels with predefined models
 #
@@ -143,7 +153,7 @@ th.forecast <- function(aggy, h=NULL, m, model, thr=3, ...)
   # Model estimation and forecasts
   for (k in 1:n.k)
   {
-    temp <- th.forecast.loop(k,aggy,m,AL,H,model,thr, ...)
+    temp <- th.forecast.loop(k,aggy,m,AL,H,model,thr, forecastfunction, ...)
     frc[[k]] <- temp$frc
     fitted[[k]] <- temp$fitted
     resid[[k]] <- temp$resid
@@ -205,7 +215,7 @@ th.forecast <- function(aggy, h=NULL, m, model, thr=3, ...)
 }
 
 #-------------------------------------------------
-th.forecast.loop <- function(k,Y,m,AL,H,model,thr, ...){
+th.forecast.loop <- function(k,Y,m,AL,H,model,thr, forecastfunction, ...){
 # Parallel loop for model forecasts
 # Internal function
 
@@ -213,7 +223,20 @@ th.forecast.loop <- function(k,Y,m,AL,H,model,thr, ...){
 
   #print(paste("Fitting series of frequency",frequency(Y[[k]])))
 
-  if (model=="ets")
+  if(!is.null(forecastfunction))
+  {
+    fc <- forecastfunction(Y[[k]], H[k], ...)
+    frc <- matrix(fc$mean, nrow=m/AL[k])
+    fitted <- fitted(fc)
+    if(is.null(fitted) & !is.null(fc$residuals))
+      fitted <- Y[[k]] - fc$residuals
+    if(!is.null(fc$lower))
+    {
+      mseh <- matrix(((fc$mean - fc$lower[,1])/abs(stats::qnorm((1-0.8)/2)))^2,
+          nrow=m/AL[k])
+    }
+  }
+  else if (model=="ets")
   {
     fit <- try(forecast::ets(Y[[k]], ...), silent=TRUE)
     # Do something simpler if ets model doesn't work
@@ -292,7 +315,7 @@ th.forecast.loop <- function(k,Y,m,AL,H,model,thr, ...){
 
   # Calculate fitted residuals and MSE
   resid <- Y[[k]] - fitted
-  mse <- mean(fit$residuals^2, na.rm=TRUE)
+  mse <- mean(resid^2, na.rm=TRUE)
 
   return(list(frc=frc,mse=mse,mseh=mseh,fitted=fitted,resid=resid))
 }

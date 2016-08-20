@@ -99,6 +99,13 @@ tsaggregates <- function (y, m=frequency(y), align=c("end","start"))
     names(y.out)[mout==2L] <- "Hourly"
     names(y.out)[mout==1L] <- "Half-hourly"
   }
-
+  else if(m == 52L)
+  {
+    names(y.out) <- paste(mout,"-Weekly",sep="")
+    names(y.out)[mout==52L] <- "Annual"
+    names(y.out)[mout==26L] <- "Biannual"
+    names(y.out)[mout==13L] <- "Quarterly"
+    names(y.out)[mout==1L] <- "Weekly"
+  }
   return(structure(y.out, class="tsaggregates"))
 }

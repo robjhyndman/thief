@@ -30,7 +30,7 @@
 #'   forecast object for bottom level series.
 #'
 #' @examples
-#'   z <- thief(MAPA::admissions)
+#'   z <- thief(AEdemand[,12], model='arima')
 #'   plot(z)
 #'
 #' @export

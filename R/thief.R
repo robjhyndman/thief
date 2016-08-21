@@ -153,6 +153,7 @@ th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
   {
     fit <- try(forecast::ets(y, ...), silent=TRUE)
     # Do something simpler if ets model doesn't work
+    # This is only necessary for versions of the package before 22 Aug 2016 (7.2beta)
     if(is.element("try-error",class(fit)))
     {
       # Use HW if there is enough data and the data is seasonal

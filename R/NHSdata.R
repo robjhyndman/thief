@@ -11,8 +11,6 @@
 #'
 #' @keywords datasets
 #'
-#' @references 
-#'
 #' @examples
 #' library(ggplot2)
 #' autoplot(AEdemand, xlab="Year", ylab="Demand ('000)") +

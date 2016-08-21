@@ -1,4 +1,4 @@
-#' Temporal hierarchy forecasting
+#' Temporal hierarchical forecasting
 #'
 #' Takes a time series as input and produces forecasts using
 #' the temporal hierarchical approach of Athanasopoulos et al (2016).
@@ -61,56 +61,17 @@ thief <- function(y, m=frequency(y), h=m*2,
     stop("I need at least 2 periods of data")
 
   # Compute aggregate
-  aggy <- tsaggregates(y=y, m=m, align='end')
+  aggy <- tsaggregates(y)
 
   # Compute forecasts
-  frc <- th.forecast(aggy, h=h, m=m, model=model, 
+  frc <- th.forecast(aggy, h=h, model=model, 
     forecastfunction=forecastfunction, ...)
 
-  # Set up group matrix for hts
-  nsum <- as.numeric(sub("AL","",rownames(frc$forecast)))
-  unsum <- unique(nsum)
-  grps <- matrix(0, nrow=length(unsum)-1, ncol=m)
-  for(i in 1:(length(unsum)-1))
-  {
-    mi <- m/unsum[i]
-    grps[i,] <- rep(1:mi, rep(unsum[i],mi))
-  }
+  # Reconcile forecasts and fitted values
+  bts <- thiefcombine(frc$forecast, comb, frc$mse, frc$residuals)
+  fits <- thiefcombine(frc$fitted, comb, frc$mse, frc$residuals)
 
-  # Bottom up
-  if(comb == "bu")
-  {
-    bts <- ts(c(utils::tail(frc$forecast, m)), frequency=m, start=tsp(y)[2] + 1/m)
-    fits <- ts(c(utils::tail(frc$fitted, m)), frequency=m, start=tsp(y)[1])
-  }
-  else 
-  {
-    # OLS and WLS
-    if(is.element(comb, c("struc","ols","mse")))
-    {
-      if(comb=="struc")
-        weights <- 1/nsum
-      else if(comb=="ols")
-        weights <- NULL
-      else if(comb=="mse")
-        weights <- 1/rep(rev(frc$mse), rev(unsum))
-      bts <- hts::combinef(t(frc$forecast), groups=grps, weights=weights, keep='bottom')
-      fits <- hts::combinef(t(frc$fitted), groups=grps, weights=weights, keep='bottom')
-    }
-    # GLS
-    else
-    {
-      bts <- hts::MinT(t(frc$forecast), groups=grps, residual=t(frc$residual), 
-        covariance=comb, keep='bottom')
-      fits <- hts::MinT(t(frc$fitted), groups=grps, residual=t(frc$residual), 
-        covariance=comb, keep='bottom')
-    }
-    # Save bottom level forecasts
-    bts <- ts(c(t(bts)), frequency=m, start=tsp(y)[2] + 1/m)
-    # Reconcile fitted values
-    fits <- ts(c(t(fits)), frequency=m, start=tsp(y)[1])
-  }
-  
+  # Construct forecast object to return
   out <- structure(list(x=y, mean=bts, fitted=fits, residuals=y-fits),
     class='forecast')
   out$method <- paste("THieF-",toupper(model),sep="")
@@ -118,7 +79,7 @@ thief <- function(y, m=frequency(y), h=m*2,
 }
 
 #-------------------------------------------------
-th.forecast <- function(aggy, h=NULL, m, model, forecastfunction, thr=3, ...)
+th.forecast <- function(aggy, h=NULL, model, forecastfunction, thr=3, ...)
 {
 # Produce forecasts for multiple temporal aggregation levels with predefined models
 #
@@ -141,11 +102,13 @@ th.forecast <- function(aggy, h=NULL, m, model, forecastfunction, thr=3, ...)
 #
 # Nikolaos Kourentzes and Rob J Hyndman
 
-  # Produce forecasts
-  # Calculate maximum horizon
+  # Calculate forecast horizons
   n.k <- length(aggy)
-  AL <- m/unlist(lapply(aggy, frequency))
-  H <- m/AL*ceiling(h/m)  # Forecast horizon
+  freq <- unlist(lapply(aggy, frequency))
+  m <- max(freq)
+  AL <- m/freq
+  H <- m/AL*ceiling(h/m) 
+
   # Initialise
   frc <- fitted <- resid <- mseh <- vector("list",n.k)
   mse <- vector("numeric",n.k)
@@ -153,7 +116,7 @@ th.forecast <- function(aggy, h=NULL, m, model, forecastfunction, thr=3, ...)
   # Model estimation and forecasts
   for (k in 1:n.k)
   {
-    temp <- th.forecast.loop(k,aggy,m,AL,H,model,thr, forecastfunction, ...)
+    temp <- th.forecast.loop(aggy[[k]], H[[k]], model, thr, forecastfunction, ...)
     frc[[k]] <- temp$frc
     fitted[[k]] <- temp$fitted
     resid[[k]] <- temp$resid
@@ -161,129 +124,57 @@ th.forecast <- function(aggy, h=NULL, m, model, forecastfunction, thr=3, ...)
     mseh[[k]] <- temp$mseh
   }
 
-  names(frc) <- paste0("AL",AL)
-  names(mse) <- paste0("AL",AL)
-
-  # Re-order aggregation levels
-  frc <- frc[n.k:1]
-  # Create forecast vector across aggregation levels
-  frc <- do.call("rbind",frc)
-  # Reformat it as matrix in case it was a single column before
-  frc <- matrix(frc,ncol=ceiling(h/m))
-
-  rownames(frc) <- paste0("AL",rep(AL[n.k:1],m/AL[n.k:1]))
-  colnames(frc) <- paste0("AL",m,"(t+",1:ceiling(h/m),")")
-
-  fitted <- fitted[n.k:1]
-  resid <- resid[n.k:1]
-  n.in <- unlist(lapply(fitted,length))
-  temp.fitted <- temp.resid <- array(NA,c(sum(m/AL),n.in[1]/(m/AL[n.k])))
-  # Start/stop of each aggregation level
-  idx <- c(1,cumsum((m/AL)[n.k:1])+1)
-  for (i in 1:(n.in[1]/(m/AL[n.k]))) # For each full year
-  {
-    for (k in 1:n.k) # For each aggregation level
-    {
-      # Start from end towards start
-      temp.fitted[idx[k]:(idx[k+1]-1), ((n.in[1]/(m/AL[n.k]))-i+1)] <-
-        fitted[[k]][(n.in[k]-(m/AL[n.k-k+1])*i+1):(n.in[k]-(m/AL[n.k-k+1])*(i-1))]
-      temp.resid[idx[k]:(idx[k+1]-1), ((n.in[1]/(m/AL[n.k]))-i+1)] <-
-        resid[[k]][(n.in[k]-(m/AL[n.k-k+1])*i+1):(n.in[k]-(m/AL[n.k-k+1])*(i-1))]
-    }
-  }
-  fitted <- matrix(temp.fitted,nrow=sum(m/AL))
-  resid <- matrix(temp.resid,nrow=sum(m/AL))
-  rownames(fitted) <- rownames(resid) <- rownames(frc)
-  
-  # MSEH
-  if(length(mseh) == n.k)
-  {
-    names(mseh) <- paste0("AL",AL)
-    mseh <- mseh[n.k:1]
-    # Create forecast vector across aggregation levels
-    mseh <- do.call("rbind",mseh)
-    # Reformat it as matrix in case it was a single column before
-    mseh <- matrix(mseh,ncol=ceiling(h/m))
-    rownames(mseh) <- paste0("AL",rep(AL[n.k:1],m/AL[n.k:1]))
-    colnames(mseh) <- paste0("AL",m,"(t+",1:ceiling(h/m),")")
-  }
-  else
-    mseh <- NULL
-
   # Return forecasts
-  return(list(forecast=frc,fitted=fitted,residual=resid,mse=mse,mseh=mseh))
+  #names(frc) <- names(fitted) <- names(resid) <- names(mseh) <- names(mse) <- names(aggy)
+
+  return(list(forecast=frc,fitted=fitted,residuals=resid,mse=mse,mseh=mseh))
 }
 
 #-------------------------------------------------
-th.forecast.loop <- function(k,Y,m,AL,H,model,thr, forecastfunction, ...){
-# Parallel loop for model forecasts
-# Internal function
+th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
+# Loop for model forecasts
+# Produce forecasts and other information for univariate series y
+# Forecast horizon h
+# Return list of forecasts, fitted values, residuals, mse, etc.
 
-  mseh <- fitted <- resid <- NULL
-
-  #print(paste("Fitting series of frequency",frequency(Y[[k]])))
+  m <- frequency(y)
 
   if(!is.null(forecastfunction))
-  {
-    fc <- forecastfunction(Y[[k]], H[k], ...)
-    frc <- matrix(fc$mean, nrow=m/AL[k])
-    fitted <- fitted(fc)
-    if(is.null(fitted) & !is.null(fc$residuals))
-      fitted <- Y[[k]] - fc$residuals
-    if(!is.null(fc$lower))
-    {
-      mseh <- matrix(((fc$mean - fc$lower[,1])/abs(stats::qnorm((1-0.8)/2)))^2,
-          nrow=m/AL[k])
-    }
-  }
+    fc <- forecastfunction(y, h, level=80,...)
   else if (model=="ets")
   {
-    fit <- try(forecast::ets(Y[[k]], ...), silent=TRUE)
+    fit <- try(forecast::ets(y, ...), silent=TRUE)
     # Do something simpler if ets model doesn't work
     if(is.element("try-error",class(fit)))
     {
       # Use HW if there is enough data and the data is seasonal
-      if(frequency(Y[[k]]) > 1L & length(Y[[k]]) >= 2*frequency(Y[[k]]))
-      {
-        fit <- temp.frc <- forecast::hw(Y[[k]], h=H[k], level=95, 
+      if(frequency(y) > 1L & length(y) >= 2*frequency(y))
+        fit <- fc <- forecast::hw(y, h=h, level=80, 
                             initial='simple', alpha=0.2, beta=0.1, gamma=0.01)
-      }
       else # Otherwise just use Holt's
-      {
-        fit <- temp.frc <- forecast::holt(Y[[k]], h=H[k], level=95, 
+        fit <- fc <- forecast::holt(y, h=h, level=80, 
                                initial='simple', alpha=0.2, beta=0.1)
-      }
     }
     else
-    {
-      temp.frc <- forecast::forecast(fit, h=H[k], level=95)
-    }
-    fitted <- fit$fitted
-    frc <- matrix(temp.frc$mean,nrow=m/AL[k])
-    mseh <- matrix(((temp.frc$mean - temp.frc$lower[,1])/abs(stats::qnorm((1-0.8)/2)))^2,
-        nrow=m/AL[k])
+      fc <- forecast::forecast(fit, h=h, level=80)
   }
   else if(model=="arima")
   {
-    fit <- forecast::auto.arima(Y[[k]], ...)
-    temp.frc <- forecast::forecast(fit, h=H[k], level=95)
-    fitted <- fit$x - fit$residuals
-    frc <- matrix(temp.frc$mean, nrow=m/AL[k])
-    mseh <- matrix(((temp.frc$mean - temp.frc$lower[,1])/abs(stats::qnorm((1-0.8)/2)))^2,
-        nrow=m/AL[k])
+    fit <- forecast::auto.arima(y, ...)
+    fc <- forecast::forecast(fit, h=h, level=80)
   } 
   else if (model == "theta" || model == "theta.out")
   {
     # Theta
-    cma <- TStools::cmav(Y[[k]])
+    cma <- TStools::cmav(y)
     loc <- NULL
-    if ((m/AL[k]) != 1)
+    if (m != 1)
     {
-      is.mult <- TStools::mseastest(Y[[k]],cma=cma)$is.multiplicative
+      is.mult <- TStools::mseastest(y,cma=cma)$is.multiplicative
       # Identify outliers using time series decomposition
       if (model == "theta.out")
       {
-        y.dcp <- TStools::decomp(Y[[k]],trend=cma)
+        y.dcp <- TStools::decomp(y,trend=cma)
         loc <- TStools::residout(y.dcp$irregular,t=thr)$location
       }
     } 
@@ -292,30 +183,44 @@ th.forecast.loop <- function(k,Y,m,AL,H,model,thr, forecastfunction, ...){
       is.mult <- TRUE
       # Identify outliers using time series decomposition
       if (model == "theta.out")
-        loc <- TStools::residout(Y[[k]]-cma,t=thr)$location
+        loc <- TStools::residout(y-cma,t=thr)$location
     }
 
-    fit <- TStools::theta(Y[[k]],h=H[k], multiplicative=is.mult, outliers=loc)
-    frc <- matrix(as.numeric(fit$frc),nrow=m/AL[k])
-    fitted <- fit$fit
+    fit <- TStools::theta(y, h=h, multiplicative=is.mult, outliers=loc)
+    fc <- list(mean=fit$frc, fitted=fit$fit)
   }
   else 
   {
     # Seasonal naive forecast
     if(model=='snaive')
-      fit <- forecast::snaive(Y[[k]], h=H[k], level=95)
+      fc <- forecast::snaive(y, h=h, level=95)
     # Naive forecast
     else
-      fit <- forecast::naive(Y[[k]], h=H[k], level=95)
-    fitted <- fit$x - fit$residuals
-    frc <- matrix(fit$mean, nrow=m/AL[k])
-    mseh <- matrix(((fit$mean - fit$lower[,1])/abs(stats::qnorm((1-0.8)/2)))^2,
-        nrow=m/AL[k])
+      fc <- forecast::naive(y, h=h, level=95)
   }
 
   # Calculate fitted residuals and MSE
-  resid <- Y[[k]] - fitted
+  fitted <- fitted(fc)
+  if(is.null(fitted) & !is.null(fc$residuals))
+    fitted <- y - fc$residuals
+  if(!is.null(fitted))
+    resid <- y - fitted
+  else
+    resid <- NULL
   mse <- mean(resid^2, na.rm=TRUE)
 
-  return(list(frc=frc,mse=mse,mseh=mseh,fitted=fitted,resid=resid))
+  # Only keep full years of fitted values and residuals
+  # Remove partial year from start
+  tspy <- tsp(y)
+  fullyears <- trunc(length(y) / m)
+  fitted <- ts(utils::tail(fitted, fullyears*m), frequency=m, end=tspy[2])
+  resid <- ts(utils::tail(resid, fullyears*m), frequency=m, end=tspy[2])
+
+  # Compute MSE and MSEH
+  if(!is.null(fc$lower))
+    mseh <- ((fc$mean - fc$lower[,1])/stats::qnorm(0.9))^2
+  else
+    mseh <- NULL
+
+  return(list(frc=fc$mean,mse=mse,mseh=mseh,fitted=fitted,resid=resid))
 }

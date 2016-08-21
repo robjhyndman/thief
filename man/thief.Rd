@@ -2,7 +2,7 @@
 % Please edit documentation in R/thief.R
 \name{thief}
 \alias{thief}
-\title{Temporal hierarchy forecasting}
+\title{Temporal hierarchical forecasting}
 \usage{
 thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   "bu", "shr", "sam"), model = c("ets", "arima", "theta", "naive", "snaive"),

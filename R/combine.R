@@ -1,0 +1,105 @@
+#' Combine temporal hierarchical forecasts
+#'
+#' Takes forecasts of time series at all levels of temporal aggregation 
+#' and combines them using the temporal hierarchical approach of Athanasopoulos et al (2016).
+#'
+#' @param forecasts List of forecasts. Each element must be a time series of forecasts. 
+#' The number of forecasts should be equal to k times the seasonal period for each series, 
+#' where k is the same across all series.
+#' @param comb Combination method of temporal hierarchies, taking one of the following values:
+#' \describe{
+#'   \item{"struc"}{Structural scaling - weights from temporal hierarchy}
+#'   \item{"mse"}{Variance scaling - weights from in-sample MSE}
+#'   \item{"ols"}{Unscaled OLS combination weights}
+#'   \item{"bu"}{Bottom-up combination -- i.e., all aggregate forecasts are ignored.}
+#'   \item{"shr"}{GLS using a shrinkage (to block diagonal) estimate of residuals}
+#'   \item{"sam"}{GLS using sample covariance matrix of residuals}
+#' }
+#' @param mse A vector of one-step MSE values corresponding to each of the forecast series.
+#' @param residuals List of residuals corresponding to each of the forecast models. 
+#' Each element must be a time series of residuals
+#'
+#' @return
+#'   time series of reconciled bottom level series.
+#'
+#' @examples
+#' aggts <- tsaggregates(USAccDeaths)
+#' fc <- list()
+#' for(i in 1:length(aggts))
+#'   fc[[i]] <- forecast(aggts[[i]], h=2*frequency(aggts[[i]]))$mean
+#' z <- thiefcombine(fc)
+#' library(ggplot2)
+#' autoplot(tsaggregates(z))
+#'
+#' @export
+#' @author Rob J Hyndman
+
+thiefcombine <- function(forecasts,
+               comb=c("struc","mse","ols","bu","shr","sam"),
+               mse=NULL, residuals=NULL)
+{
+  comb <- match.arg(comb)
+
+  # Find seasonal periods
+  freq <- unlist(lapply(forecasts,frequency))
+  if(min(freq) != 1L)
+    stop("Minimum seasonal period should be 1")
+  m <- max(freq)
+  # Put in order
+  k <- rev(order(freq))
+  forecasts <- forecasts[k]
+  freq <- freq[k]
+
+  # Check series each have same equivalent lengths.
+  lengths <- unlist(lapply(forecasts, length))
+  if(!is.constant(lengths/freq))
+    stop("Forecast series must have the same equivalent lengths")
+
+  # Bottom up
+  if(comb == "bu")
+    return(forecasts[[1]])
+
+  tspf <- tsp(forecasts[[1]])
+
+  # Set up group matrix for hts
+  nsum <- rep(freq,m/freq)
+  unsum <- unique(nsum)
+  grps <- matrix(0, nrow=length(unsum)-1, ncol=m)
+  for(i in 1:(length(unsum)-1))
+  {
+    mi <- m/unsum[i]
+    grps[i,] <- rep(1:mi, rep(unsum[i],mi))
+  }
+
+  # Set up matrix of forecasts in right structure
+  nc <- length(forecasts[[1]])/m
+  fmat <- matrix(0, nrow=0, ncol=nc)
+  for(i in rev(seq_along(forecasts)))
+    fmat <- rbind(fmat, matrix(forecasts[[i]], ncol=nc))
+
+  if(is.element(comb, c("struc","ols","mse"))) # OLS and WLS
+  {
+    if(comb=="struc")
+      weights <- 1/nsum
+    else if(comb=="ols")
+      weights <- NULL
+    else if(comb=="mse")
+      weights <- 1/rep(rev(mse), rev(unsum))
+    bts <- hts::combinef(t(fmat), groups=grps, weights=weights, keep='bottom')
+  }
+  else   # GLS
+  {
+    # Set up matrix of residuals in right structure
+    if(is.null(residuals))
+      stop("GLS needs residuals")
+    nc <- length(residuals[[1]])/m
+    rmat <- matrix(0, nrow=0, ncol=nc)
+    for(i in rev(seq_along(forecasts)))
+      rmat <- rbind(rmat, matrix(residuals[[i]], ncol=nc))
+    bts <- hts::MinT(t(fmat), groups=grps, residual=t(rmat),  covariance=comb, keep='bottom')
+  }
+  bts <- ts(c(t(bts)))
+
+  tsp(bts) <- tspf
+  return(bts)
+}

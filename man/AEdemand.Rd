@@ -48,8 +48,5 @@ for(i in 6:1)
   lines(reconciled[[i]], col='blue')
 }
 }
-\references{
-
-}
 \keyword{datasets}
 

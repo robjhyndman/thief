@@ -31,14 +31,13 @@ for(i in 1:5)
 base[[6]] <-  forecast(auto.arima(totalagg[[6]]), h=2)
 
 # Reconciled forecasts
-reconciled <- tsaggregates(thief(total, model='arima')$mean)
+reconciled <- reconcilethief(base)
 
 main <- paste(names(totalagg)," (k=",
            52/unlist(lapply(reconciled,frequency)),")",sep="")
 par(mfrow=c(2,3))
 for(i in 6:1)
 {
-  tt <- time(reconciled[[i]])
   ylim <- range(base[[i]]$mean, base[[i]]$x, reconciled[[i]])
   plot(base[[i]], main=main[i], fcol='white',
       plot.conf=FALSE, ylim=ylim, xlim=c(2010.5,2017.5))

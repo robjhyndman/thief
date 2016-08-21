@@ -49,10 +49,11 @@ Takes a time series as input and produces forecasts using
 the temporal hierarchical approach of Athanasopoulos et al (2016).
 }
 \details{
-This function computes the temporal aggregates using \code{\link{tsaggregates}},
-then calculates all forecasts using the model function specified by \code{model}
-or \code{forecastfunction}, and finally reconciles the forecasts using
-\code{\link{reconcilethief}}. The reconciled forecasts of \code{y} are returned.
+This function computes the temporal aggregates of \code{y} using 
+\code{\link{tsaggregates}}, then calculates all forecasts using the model function 
+specified by \code{model} or \code{forecastfunction}, and finally reconciles the 
+forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y} 
+are returned.
 }
 \examples{
   z <- thief(AEdemand[,12], model='arima')

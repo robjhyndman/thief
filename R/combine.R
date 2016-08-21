@@ -3,7 +3,8 @@
 #' Takes forecasts of time series at all levels of temporal aggregation 
 #' and combines them using the temporal hierarchical approach of Athanasopoulos et al (2016).
 #'
-#' @param forecasts List of forecasts. Each element must be a time series of forecasts. 
+#' @param forecasts List of forecasts. Each element must be a time series of forecasts, 
+#' or a forecast object. 
 #' The number of forecasts should be equal to k times the seasonal period for each series, 
 #' where k is the same across all series.
 #' @param comb Combination method of temporal hierarchies, taking one of the following values:
@@ -17,7 +18,9 @@
 #' }
 #' @param mse A vector of one-step MSE values corresponding to each of the forecast series.
 #' @param residuals List of residuals corresponding to each of the forecast models. 
-#' Each element must be a time series of residuals
+#' Each element must be a time series of residuals. If \code{forecast} contains a list of
+#' forecast objects, then the residuals will be extracted automatically and this argument
+#' is not needed. However, it will be used if not \code{NULL}.
 #' @param returnall If \code{TRUE}, a list of time series corresponding to the first argument
 #' is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.
 #'
@@ -56,6 +59,30 @@ reconcilethief <- function(forecasts,
                mse=NULL, residuals=NULL, returnall=TRUE)
 {
   comb <- match.arg(comb)
+
+  # If forecasts is a list of forecast objects, then
+  # extract list of forecast time series and list of residual time series
+  if(is.element("forecast",class(forecasts[[1]])))
+  {
+    # Grab residuals
+    if(is.null(residuals))
+    {
+      residuals <- list()
+      for(i in seq_along(forecasts))
+        residuals[[i]] <- residuals(forecasts[[i]])
+      # Discard partial years at start of residual series
+      for(i in seq_along(residuals))
+      {
+        tspy <- tsp(residuals[[i]])
+        m <- tspy[3]
+        fullyears <- trunc(length(residuals[[i]])/m)
+        residuals[[i]] <- ts(utils::tail(residuals[[i]], fullyears*m), frequency=m, end=tspy[2])
+      }
+    }
+    # Grab forecasts
+    for(i in seq_along(forecasts))
+      forecasts[[i]] <- forecasts[[i]]$mean
+  }
 
   # Find seasonal periods
   freq <- unlist(lapply(forecasts,frequency))

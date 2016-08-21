@@ -8,7 +8,8 @@ reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
   mse = NULL, residuals = NULL, returnall = TRUE)
 }
 \arguments{
-\item{forecasts}{List of forecasts. Each element must be a time series of forecasts. 
+\item{forecasts}{List of forecasts. Each element must be a time series of forecasts, 
+or a forecast object. 
 The number of forecasts should be equal to k times the seasonal period for each series, 
 where k is the same across all series.}
 
@@ -25,7 +26,9 @@ where k is the same across all series.}
 \item{mse}{A vector of one-step MSE values corresponding to each of the forecast series.}
 
 \item{residuals}{List of residuals corresponding to each of the forecast models. 
-Each element must be a time series of residuals}
+Each element must be a time series of residuals. If \code{forecast} contains a list of
+forecast objects, then the residuals will be extracted automatically and this argument
+is not needed. However, it will be used if not \code{NULL}.}
 
 \item{returnall}{If \code{TRUE}, a list of time series corresponding to the first argument
 is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.}

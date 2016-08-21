@@ -13,6 +13,9 @@
 #' @examples
 #'   deathagg <- tsaggregates(USAccDeaths)
 #'   plot(deathagg, series=c(1,2,4,6))
+#' 
+#'   library(ggplot2)
+#'   autoplot(deathagg)
 #'
 #' @author Rob J Hyndman
 #' @export

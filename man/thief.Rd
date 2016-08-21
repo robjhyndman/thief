@@ -42,11 +42,17 @@ as the second argument. It must return an object of class \code{forecast}.}
 (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.}
 }
 \value{
-forecast object for bottom level series.
+forecast object.
 }
 \description{
 Takes a time series as input and produces forecasts using
 the temporal hierarchical approach of Athanasopoulos et al (2016).
+}
+\details{
+This function computes the temporal aggregates using \code{\link{tsaggregates}},
+then calculates all forecasts using the model function specified by \code{model}
+or \code{forecastfunction}, and finally reconciles the forecasts using
+\code{\link{reconcilethief}}. The reconciled forecasts of \code{y} are returned.
 }
 \examples{
   z <- thief(AEdemand[,12], model='arima')
@@ -55,5 +61,8 @@ the temporal hierarchical approach of Athanasopoulos et al (2016).
 }
 \author{
 Rob J Hyndman and Nikolaos Kourentzes
+}
+\seealso{
+\code{\link{reconcilethief}}
 }
 

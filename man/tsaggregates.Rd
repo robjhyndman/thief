@@ -30,4 +30,7 @@ Produces all temporal aggregations for frequencies greater than 1
 \author{
 Rob J Hyndman
 }
+\seealso{
+\code{\link{plot.tsaggregates}}
+}
 

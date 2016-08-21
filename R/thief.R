@@ -28,10 +28,18 @@
 #' as the second argument. It must return an object of class \code{forecast}.
 #' @param ...   Arguments to be passed to the time series modelling function 
 #' (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.
+#' 
+#' @details This function computes the temporal aggregates of \code{y} using 
+#' \code{\link{tsaggregates}}, then calculates all forecasts using the model function 
+#' specified by \code{model} or \code{forecastfunction}, and finally reconciles the 
+#' forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y} 
+#' are returned.
 #'
 #' @return
-#'   forecast object for bottom level series.
-#'
+#'   forecast object.
+#' 
+#' @seealso \code{\link{reconcilethief}}
+#' 
 #' @examples
 #'   z <- thief(AEdemand[,12], model='arima')
 #'   plot(z)
@@ -68,8 +76,8 @@ thief <- function(y, m=frequency(y), h=m*2,
     forecastfunction=forecastfunction, ...)
 
   # Reconcile forecasts and fitted values
-  bts <- thiefcombine(frc$forecast, comb, frc$mse, frc$residuals)
-  fits <- thiefcombine(frc$fitted, comb, frc$mse, frc$residuals)
+  bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals, returnall=FALSE)
+  fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals, returnall=FALSE)
 
   # Construct forecast object to return
   out <- structure(list(x=y, mean=bts, fitted=fits, residuals=y-fits),

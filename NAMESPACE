@@ -2,8 +2,8 @@
 
 S3method(autoplot,tsaggregates)
 S3method(plot,tsaggregates)
+export(reconcilethief)
 export(thief)
-export(thiefcombine)
 export(tsaggregates)
 import(forecast)
 importFrom(ggplot2,autoplot)

@@ -1,4 +1,4 @@
-#' Combine temporal hierarchical forecasts
+#' Reconcile temporal hierarchical forecasts
 #'
 #' Takes forecasts of time series at all levels of temporal aggregation 
 #' and combines them using the temporal hierarchical approach of Athanasopoulos et al (2016).
@@ -18,25 +18,42 @@
 #' @param mse A vector of one-step MSE values corresponding to each of the forecast series.
 #' @param residuals List of residuals corresponding to each of the forecast models. 
 #' Each element must be a time series of residuals
+#' @param returnall If \code{TRUE}, a list of time series corresponding to the first argument
+#' is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.
 #'
 #' @return
-#'   time series of reconciled bottom level series.
+#'   list of reconciled time series. If \code{returnall==FALSE}, only the most 
+#'   disaggregated series is returned.
+#' @seealso \code{\link{thief}}, \code{\link{tsaggregates}}
 #'
 #' @examples
+#' # Construct aggregates
 #' aggts <- tsaggregates(USAccDeaths)
+#' 
+#' # Compute forecasts
 #' fc <- list()
-#' for(i in 1:length(aggts))
+#' for(i in seq_along(aggts))
 #'   fc[[i]] <- forecast(aggts[[i]], h=2*frequency(aggts[[i]]))$mean
-#' z <- thiefcombine(fc)
-#' library(ggplot2)
-#' autoplot(tsaggregates(z))
+#' names(fc) <- names(aggts)
+#' 
+#' # Reconcile forecasts
+#' z <- reconcilethief(fc)
+#' 
+#' # Plot forecasts before and after reconcilation
+#' par(mfrow=c(3,2))
+#' for(i in seq_along(fc))
+#' {
+#'   plot(fc[[i]], ylab="", main=names(fc)[i],
+#'     ylim=range(fc[[i]],z[[i]]))
+#'   lines(z[[i]],col='red')
+#' }
 #'
 #' @export
 #' @author Rob J Hyndman
 
-thiefcombine <- function(forecasts,
+reconcilethief <- function(forecasts,
                comb=c("struc","mse","ols","bu","shr","sam"),
-               mse=NULL, residuals=NULL)
+               mse=NULL, residuals=NULL, returnall=TRUE)
 {
   comb <- match.arg(comb)
 
@@ -101,5 +118,8 @@ thiefcombine <- function(forecasts,
   bts <- ts(c(t(bts)))
 
   tsp(bts) <- tspf
-  return(bts)
+  if(returnall)
+    return(tsaggregates(bts))
+  else
+    return(bts)
 }

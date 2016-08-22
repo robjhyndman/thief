@@ -8,9 +8,9 @@ reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
   mse = NULL, residuals = NULL, returnall = TRUE)
 }
 \arguments{
-\item{forecasts}{List of forecasts. Each element must be a time series of forecasts, 
-or a forecast object. 
-The number of forecasts should be equal to k times the seasonal period for each series, 
+\item{forecasts}{List of forecasts. Each element must be a time series of forecasts,
+or a forecast object.
+The number of forecasts should be equal to k times the seasonal period for each series,
 where k is the same across all series.}
 
 \item{comb}{Combination method of temporal hierarchies, taking one of the following values:
@@ -25,7 +25,7 @@ where k is the same across all series.}
 
 \item{mse}{A vector of one-step MSE values corresponding to each of the forecast series.}
 
-\item{residuals}{List of residuals corresponding to each of the forecast models. 
+\item{residuals}{List of residuals corresponding to each of the forecast models.
 Each element must be a time series of residuals. If \code{forecast} contains a list of
 forecast objects, then the residuals will be extracted automatically and this argument
 is not needed. However, it will be used if not \code{NULL}.}
@@ -34,11 +34,11 @@ is not needed. However, it will be used if not \code{NULL}.}
 is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.}
 }
 \value{
-list of reconciled time series. If \code{returnall==FALSE}, only the most 
-  disaggregated series is returned.
+List of reconciled forecasts in the same format as \code{forecast}.
+If \code{returnall==FALSE}, only the most disaggregated series is returned.
 }
 \description{
-Takes forecasts of time series at all levels of temporal aggregation 
+Takes forecasts of time series at all levels of temporal aggregation
 and combines them using the temporal hierarchical approach of Athanasopoulos et al (2016).
 }
 \examples{
@@ -48,19 +48,17 @@ aggts <- tsaggregates(USAccDeaths)
 # Compute forecasts
 fc <- list()
 for(i in seq_along(aggts))
-  fc[[i]] <- forecast(aggts[[i]], h=2*frequency(aggts[[i]]))$mean
-names(fc) <- names(aggts)
+  fc[[i]] <- forecast(auto.arima(aggts[[i]]), h=2*frequency(aggts[[i]]))
 
 # Reconcile forecasts
-z <- reconcilethief(fc)
+reconciled <- reconcilethief(fc)
 
 # Plot forecasts before and after reconcilation
-par(mfrow=c(3,2))
+par(mfrow=c(2,3))
 for(i in seq_along(fc))
 {
-  plot(fc[[i]], ylab="", main=names(fc)[i],
-    ylim=range(fc[[i]],z[[i]]))
-  lines(z[[i]],col='red')
+  plot(reconciled[[i]], main=names(aggts)[i])
+  lines(fc[[i]]$mean, col='red')
 }
 
 }

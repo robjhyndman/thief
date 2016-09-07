@@ -1,4 +1,6 @@
 #thief: Temporal HIErarchical Forecasting
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/thief)](https://cran.r-project.org/package=thief)
+[![Downloads](http://cranlogs.r-pkg.org/badges/thief)](https://cran.r-project.org/package=thief)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/robjhyndman/thief/pulls.svg?style=flat)](https://github.com/robjhyndman/thief/pulls)
 
 The R package *thief* provides methods and tools for generating forecasts at different temporal frequencies using a hierarchical time series approach.
@@ -11,6 +13,15 @@ This package implements the methods described in
 
 
 ## Installation
+You can install the **stable** version on
+[R CRAN](https://cran.r-project.org/package=thief).
+
+```s
+install.packages('thief', dependencies = TRUE)
+```
+
+You can install the **development** version from
+[Github](https://github.com/robjhyndman/thief)
 
 ```s
 # install.packages("devtools")

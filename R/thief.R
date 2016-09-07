@@ -15,7 +15,7 @@
 #'   \item{"shr"}{GLS using a shrinkage (to block diagonal) estimate of residuals}
 #'   \item{"sam"}{GLS using sample covariance matrix of residuals}
 #' }
-#' @param model    Model used for forecasting each aggregation level:
+#' @param usemodel    Model used for forecasting each aggregation level:
 #' \describe{
 #'   \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
 #'   \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
@@ -23,7 +23,7 @@
 #'   \item{"naive"}{random walk forecasts}
 #'   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 #' }
-#' @param forecastfunction User-defined function to be used instead of \code{model}. The
+#' @param forecastfunction User-defined function to be used instead of \code{usemodel}. The
 #' function must take a time series as the first argument, and the forecast horizon 
 #' as the second argument. It must return an object of class \code{forecast}.
 #' @param ...   Arguments to be passed to the time series modelling function 
@@ -31,7 +31,7 @@
 #' 
 #' @details This function computes the temporal aggregates of \code{y} using 
 #' \code{\link{tsaggregates}}, then calculates all forecasts using the model function 
-#' specified by \code{model} or \code{forecastfunction}, and finally reconciles the 
+#' specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the 
 #' forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y} 
 #' are returned.
 #'
@@ -44,7 +44,7 @@
 #' \dontrun{
 #' 
 #' # Select ARIMA models for all series using auto.arima()
-#' z <- thief(AEdemand[,12], model='arima')
+#' z <- thief(AEdemand[,12], usemodel='arima')
 #' plot(z)
 #' 
 #' # Use your own function
@@ -59,14 +59,14 @@
 
 thief <- function(y, m=frequency(y), h=m*2,
                comb=c("struc","mse","ols","bu","shr","sam"),
-               model=c("ets","arima","theta","naive","snaive"), 
+               usemodel=c("ets","arima","theta","naive","snaive"), 
                forecastfunction=NULL, ...)
 {
   comb <- match.arg(comb)
   if(is.null(forecastfunction))
-    model <- match.arg(model)
+    usemodel <- match.arg(usemodel)
   else
-    model <- deparse(substitute(forecastfunction))
+    usemodel <- deparse(substitute(forecastfunction))
 
   # Check input is a univariate time series
   if(!is.element("ts",class(y)))
@@ -84,7 +84,7 @@ thief <- function(y, m=frequency(y), h=m*2,
   aggy <- tsaggregates(y)
 
   # Compute forecasts
-  frc <- th.forecast(aggy, h=h, model=model, 
+  frc <- th.forecast(aggy, h=h, usemodel=usemodel, 
     forecastfunction=forecastfunction, ...)
 
   # Reconcile forecasts and fitted values
@@ -94,19 +94,19 @@ thief <- function(y, m=frequency(y), h=m*2,
   # Construct forecast object to return
   out <- structure(list(x=y, mean=bts, fitted=fits, residuals=y-fits),
     class='forecast')
-  out$method <- paste("THieF-",toupper(model),sep="")
+  out$method <- paste("THieF-",toupper(usemodel),sep="")
   return(out)
 }
 
 #-------------------------------------------------
-th.forecast <- function(aggy, h=NULL, model, forecastfunction, thr=3, ...)
+th.forecast <- function(aggy, h=NULL, usemodel, forecastfunction, ...)
 {
 # Produce forecasts for multiple temporal aggregation levels with predefined models
 #
 # Inputs:
 #   aggy        List of time series to be forecast
 #   h           Forecast horizon. Default is m*2
-#   model       Model used for forecasting each aggregation level
+#   usemodel    Model used for forecasting each aggregation level
 #
 # Outputs:
 #   frc         Uncombined temporal hierarchy forecasts
@@ -135,7 +135,7 @@ th.forecast <- function(aggy, h=NULL, model, forecastfunction, thr=3, ...)
   # Model estimation and forecasts
   for (k in 1:n.k)
   {
-    temp <- th.forecast.loop(aggy[[k]], H[[k]], model, thr, forecastfunction, ...)
+    temp <- th.forecast.loop(aggy[[k]], H[[k]], usemodel, forecastfunction, ...)
     frc[[k]] <- temp$frc
     fitted[[k]] <- temp$fitted
     resid[[k]] <- temp$resid
@@ -150,7 +150,7 @@ th.forecast <- function(aggy, h=NULL, model, forecastfunction, thr=3, ...)
 }
 
 #-------------------------------------------------
-th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
+th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
 # Loop for model forecasts
 # Produce forecasts and other information for univariate series y
 # Forecast horizon h
@@ -160,7 +160,7 @@ th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
 
   if(!is.null(forecastfunction))
     fc <- forecastfunction(y, h, level=80,...)
-  else if (model=="ets")
+  else if (usemodel=="ets")
   {
     fit <- try(forecast::ets(y, ...), silent=TRUE)
     # Do something simpler if ets model doesn't work
@@ -178,12 +178,12 @@ th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
     else
       fc <- forecast::forecast(fit, h=h, level=80)
   }
-  else if(model=="arima")
+  else if(usemodel=="arima")
   {
     fit <- forecast::auto.arima(y, ...)
     fc <- forecast::forecast(fit, h=h, level=80)
   } 
-  else if (model == "theta")
+  else if (usemodel == "theta")
   {
     if(length(y) < 5)
       fc <- forecast::thetaf(y, h=h, level=80)
@@ -200,7 +200,7 @@ th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
   else 
   {
     # Seasonal naive forecast
-    if(model=='snaive')
+    if(usemodel=='snaive')
       fc <- forecast::snaive(y, h=h, level=80)
     # Naive forecast
     else

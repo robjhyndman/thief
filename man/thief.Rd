@@ -5,8 +5,8 @@
 \title{Temporal hierarchical forecasting}
 \usage{
 thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
-  "bu", "shr", "sam"), model = c("ets", "arima", "theta", "naive", "snaive"),
-  forecastfunction = NULL, ...)
+  "bu", "shr", "sam"), usemodel = c("ets", "arima", "theta", "naive",
+  "snaive"), forecastfunction = NULL, ...)
 }
 \arguments{
 \item{y}{Time series input}
@@ -25,7 +25,7 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   \item{"sam"}{GLS using sample covariance matrix of residuals}
 }}
 
-\item{model}{Model used for forecasting each aggregation level:
+\item{usemodel}{Model used for forecasting each aggregation level:
 \describe{
   \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
   \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
@@ -34,7 +34,7 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 }}
 
-\item{forecastfunction}{User-defined function to be used instead of \code{model}. The
+\item{forecastfunction}{User-defined function to be used instead of \code{usemodel}. The
 function must take a time series as the first argument, and the forecast horizon 
 as the second argument. It must return an object of class \code{forecast}.}
 
@@ -51,7 +51,7 @@ the temporal hierarchical approach of Athanasopoulos et al (2016).
 \details{
 This function computes the temporal aggregates of \code{y} using 
 \code{\link{tsaggregates}}, then calculates all forecasts using the model function 
-specified by \code{model} or \code{forecastfunction}, and finally reconciles the 
+specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the 
 forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y} 
 are returned.
 }
@@ -59,7 +59,7 @@ are returned.
 \dontrun{
 
 # Select ARIMA models for all series using auto.arima()
-z <- thief(AEdemand[,12], model='arima')
+z <- thief(AEdemand[,12], usemodel='arima')
 plot(z)
 
 # Use your own function

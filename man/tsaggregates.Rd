@@ -24,7 +24,7 @@ element is the "annual" series (i.e., the series aggregated over all seasons).
 Produces all temporal aggregations for frequencies greater than 1
 }
 \examples{
-  tsaggregates(USAccDeaths)
+tsaggregates(USAccDeaths)
 
 }
 \author{

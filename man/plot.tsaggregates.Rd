@@ -23,11 +23,11 @@ or \code{\link[forecast]{autoplot.ts}}.}
 Plots all temporal aggregations of a time series
 }
 \examples{
-  deathagg <- tsaggregates(USAccDeaths)
-  plot(deathagg, series=c(1,2,4,6))
+deathagg <- tsaggregates(USAccDeaths)
+plot(deathagg, series=c(1,2,4,6))
 
-  library(ggplot2)
-  autoplot(deathagg)
+library(ggplot2)
+autoplot(deathagg)
 
 }
 \author{

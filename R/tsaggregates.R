@@ -14,7 +14,7 @@
 #' @seealso \code{\link{plot.tsaggregates}}
 #'
 #' @examples
-#'   tsaggregates(USAccDeaths)
+#' tsaggregates(USAccDeaths)
 #'
 #' @author Rob J Hyndman
 #' @export

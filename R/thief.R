@@ -19,7 +19,7 @@
 #' \describe{
 #'   \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
 #'   \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
-#'   \item{"theta"}{theta method, using the \code{\link[TStools]{theta}} function.}
+#'   \item{"theta"}{theta method, using the \code{\link[forecTheta]{stm}} function.}
 #'   \item{"naive"}{random walk forecasts}
 #'   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 #' }
@@ -41,8 +41,17 @@
 #' @seealso \code{\link{reconcilethief}}
 #' 
 #' @examples
-#'   z <- thief(AEdemand[,12], model='arima')
-#'   plot(z)
+#' \dontrun{
+#' 
+#' # Select ARIMA models for all series using auto.arima()
+#' z <- thief(AEdemand[,12], model='arima')
+#' plot(z)
+#' 
+#' # Use your own function
+#' ftbats <- function(y,h,...){forecast(tbats(y),h)}
+#' z <- thief(AEdemand[,12], forecastfunction=ftbats)
+#' plot(z)
+#' }
 #'
 #' @export
 #' @import forecast
@@ -54,7 +63,10 @@ thief <- function(y, m=frequency(y), h=m*2,
                forecastfunction=NULL, ...)
 {
   comb <- match.arg(comb)
-  model <- match.arg(model)
+  if(is.null(forecastfunction))
+    model <- match.arg(model)
+  else
+    model <- deparse(substitute(forecastfunction))
 
   # Check input is a univariate time series
   if(!is.element("ts",class(y)))

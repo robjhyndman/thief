@@ -95,7 +95,6 @@ th.forecast <- function(aggy, h=NULL, model, forecastfunction, thr=3, ...)
 #   aggy        List of time series to be forecast
 #   h           Forecast horizon. Default is m*2
 #   model       Model used for forecasting each aggregation level
-#   thr         Threshold for identifying outliers for theta.out. Outliers are standard errors >= thr.
 #
 # Outputs:
 #   frc         Uncombined temporal hierarchy forecasts
@@ -172,40 +171,28 @@ th.forecast.loop <- function(y, h, model, thr, forecastfunction, ...){
     fit <- forecast::auto.arima(y, ...)
     fc <- forecast::forecast(fit, h=h, level=80)
   } 
-  else if (model == "theta" || model == "theta.out")
+  else if (model == "theta")
   {
-    # Theta
-    cma <- TStools::cmav(y)
-    loc <- NULL
-    if (m != 1)
+    if(length(y) < 5)
+      fc <- forecast::thetaf(y, h=h, level=80)
+    else
     {
-      is.mult <- TStools::mseastest(y,cma=cma)$is.multiplicative
-      # Identify outliers using time series decomposition
-      if (model == "theta.out")
-      {
-        y.dcp <- TStools::decomp(y,trend=cma)
-        loc <- TStools::residout(y.dcp$irregular,t=thr)$location
-      }
-    } 
-    else 
-    {
-      is.mult <- TRUE
-      # Identify outliers using time series decomposition
-      if (model == "theta.out")
-        loc <- TStools::residout(y-cma,t=thr)$location
+      fc <- forecTheta::stm(y, h=h, level=80, ...)
+      fc$x <- fc$y
+      fc$lower <- ts(matrix(fc$lower, ncol=1))
+      fc$upper <- ts(matrix(fc$upper, ncol=1))
+      tsp(fc$lower) <- tsp(fc$upper) <- tsp(fc$mean)
+      class(fc) <- "forecast"
     }
-
-    fit <- TStools::theta(y, h=h, multiplicative=is.mult, outliers=loc)
-    fc <- list(mean=fit$frc, fitted=fit$fit)
   }
   else 
   {
     # Seasonal naive forecast
     if(model=='snaive')
-      fc <- forecast::snaive(y, h=h, level=95)
+      fc <- forecast::snaive(y, h=h, level=80)
     # Naive forecast
     else
-      fc <- forecast::naive(y, h=h, level=95)
+      fc <- forecast::naive(y, h=h, level=80)
   }
 
   # Calculate fitted residuals and MSE

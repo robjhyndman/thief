@@ -1,5 +1,5 @@
 Package: thief
-Version: 0.1
+Version: 0.2
 Title: Temporal Hierarchical Forecasting
 Description: Methods and tools for generating forecasts at different temporal
     frequencies using a hierarchical time series approach.
@@ -7,7 +7,7 @@ Depends:
     R (>= 3.0.2),
     forecast (>= 7.1)
 Imports:
-    hts, TStools, ggplot2
+    hts, forecTheta, ggplot2
 LazyData: yes
 ByteCompile: TRUE
 Authors@R: c(

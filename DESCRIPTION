@@ -1,5 +1,5 @@
 Package: thief
-Version: 0.2
+Version: 0.3
 Title: Temporal Hierarchical Forecasting
 Description: Methods and tools for generating forecasts at different temporal
     frequencies using a hierarchical time series approach.

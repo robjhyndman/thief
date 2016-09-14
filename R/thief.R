@@ -226,7 +226,7 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
 
   # Compute MSE and MSEH
   if(!is.null(fc$lower))
-    mseh <- ((fc$mean - fc$lower[,1])/stats::qnorm(0.9))^2
+    mseh <- ((fc$mean - fc$lower)/stats::qnorm(0.9))^2
   else
     mseh <- NULL
 

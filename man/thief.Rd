@@ -63,7 +63,7 @@ z <- thief(AEdemand[,12], usemodel='arima')
 plot(z)
 
 # Use your own function
-ftbats <- function(y,h,...){forecast(tbats(y),h)}
+ftbats <- function(y,h,...){forecast(tbats(y),h,...)}
 z <- thief(AEdemand[,12], forecastfunction=ftbats)
 plot(z)
 }

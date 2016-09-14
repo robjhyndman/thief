@@ -48,7 +48,7 @@
 #' plot(z)
 #' 
 #' # Use your own function
-#' ftbats <- function(y,h,...){forecast(tbats(y),h)}
+#' ftbats <- function(y,h,...){forecast(tbats(y),h,...)}
 #' z <- thief(AEdemand[,12], forecastfunction=ftbats)
 #' plot(z)
 #' }
@@ -159,7 +159,18 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
   m <- frequency(y)
 
   if(!is.null(forecastfunction))
-    fc <- forecastfunction(y, h, level=80,...)
+  {
+    fc <- forecastfunction(y, h, ...)
+    # Check if PI returned.
+    if(!is.null(fc$lower))
+    {
+      # Check only 80% PI is saved
+      if(is.element(80,fc$level))
+        fc$lower <- fc$lower[,fc$level==80]
+      else
+        fc$lower <- NULL
+    }
+  }
   else if (usemodel=="ets")
   {
     fit <- try(forecast::ets(y, ...), silent=TRUE)
@@ -170,10 +181,10 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
       # Use HW if there is enough data and the data is seasonal
       if(frequency(y) > 1L & length(y) >= 2*frequency(y))
         fit <- fc <- forecast::hw(y, h=h, level=80, 
-                            initial='simple', alpha=0.2, beta=0.1, gamma=0.01)
+                        initial='simple', alpha=0.2, beta=0.1, gamma=0.01)
       else # Otherwise just use Holt's
         fit <- fc <- forecast::holt(y, h=h, level=80, 
-                               initial='simple', alpha=0.2, beta=0.1)
+                        initial='simple', alpha=0.2, beta=0.1)
     }
     else
       fc <- forecast::forecast(fit, h=h, level=80)

@@ -19,7 +19,7 @@
 #' \describe{
 #'   \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
 #'   \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
-#'   \item{"theta"}{theta method, using the \code{\link[forecTheta]{stm}} function.}
+#'   \item{"theta"}{theta method, using the \code{\link[forecast]{thetaf}} function.}
 #'   \item{"naive"}{random walk forecasts}
 #'   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 #' }
@@ -196,17 +196,7 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
   } 
   else if (usemodel == "theta")
   {
-    if(length(y) < 5)
-      fc <- forecast::thetaf(y, h=h, level=80)
-    else
-    {
-      fc <- forecTheta::stm(y, h=h, level=80, ...)
-      fc$x <- fc$y
-      fc$lower <- ts(matrix(fc$lower, ncol=1))
-      fc$upper <- ts(matrix(fc$upper, ncol=1))
-      tsp(fc$lower) <- tsp(fc$upper) <- tsp(fc$mean)
-      class(fc) <- "forecast"
-    }
+    fc <- forecast::thetaf(y, h=h, level=80)
   }
   else 
   {

@@ -29,7 +29,7 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
 \describe{
   \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
   \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
-  \item{"theta"}{theta method, using the \code{\link[forecTheta]{stm}} function.}
+  \item{"theta"}{theta method, using the \code{\link[forecast]{thetaf}} function.}
   \item{"naive"}{random walk forecasts}
   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 }}

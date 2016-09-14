@@ -5,9 +5,9 @@ Description: Methods and tools for generating forecasts at different temporal
     frequencies using a hierarchical time series approach.
 Depends:
     R (>= 3.0.2),
-    forecast (>= 7.1)
+    forecast (>= 7.2)
 Imports:
-    hts, forecTheta, ggplot2
+    hts, ggplot2
 LazyData: yes
 ByteCompile: TRUE
 Authors@R: c(

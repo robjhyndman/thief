@@ -91,6 +91,10 @@ thief <- function(y, m=frequency(y), h=m*2,
   bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals, returnall=FALSE)
   fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals, returnall=FALSE)
 
+  # Truncate to h forecasts
+  tspb <- tsp(bts)
+  bts <- ts(bts[1:h], start=tspb[1], frequency=tspb[3])
+
   # Construct forecast object to return
   out <- structure(list(x=y, mean=bts, fitted=fits, residuals=y-fits),
     class='forecast')

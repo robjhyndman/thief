@@ -23,6 +23,7 @@
 #' is not needed. However, it will be used if not \code{NULL}.
 #' @param returnall If \code{TRUE}, a list of time series corresponding to the first argument
 #' is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.
+#' @param aggregatelist (optional) User-selected list of forecast aggregates to consider
 #'
 #' @return
 #'   List of reconciled forecasts in the same format as \code{forecast}.
@@ -54,7 +55,8 @@
 
 reconcilethief <- function(forecasts,
                comb=c("struc","mse","ols","bu","shr","sam"),
-               mse=NULL, residuals=NULL, returnall=TRUE)
+               mse=NULL, residuals=NULL, returnall=TRUE, 
+               aggregatelist=NULL)
 {
   comb <- match.arg(comb)
 
@@ -108,7 +110,8 @@ reconcilethief <- function(forecasts,
   else
   {
     # Set up group matrix for hts
-    nsum <- rep(freq,m/freq)
+    # (adjusted to allow consideration of aggregatelist input)
+    nsum <- rev(rep(m/freq, freq))
     unsum <- unique(nsum)
     grps <- matrix(0, nrow=length(unsum)-1, ncol=m)
     for(i in 1:(length(unsum)-1))
@@ -156,7 +159,7 @@ reconcilethief <- function(forecasts,
     if(!returnall)
       return(bts)
     else
-      return(tsaggregates(bts))
+      return(tsaggregates(bts, aggregatelist=aggregatelist))
   }
   else #return forecast objects
   {
@@ -173,7 +176,7 @@ reconcilethief <- function(forecasts,
     }
     else
     {
-      allts <- tsaggregates(bts)
+      allts <- tsaggregates(bts, aggregatelist=aggregatelist)
       for(i in seq_along(origf))
       {
         adj <- allts[[i]] - origf[[i]]$mean

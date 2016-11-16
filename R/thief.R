@@ -26,6 +26,7 @@
 #' @param forecastfunction User-defined function to be used instead of \code{usemodel}. The
 #' function must take a time series as the first argument, and the forecast horizon 
 #' as the second argument. It must return an object of class \code{forecast}.
+#' @param aggregatelist User-selected list of forecast aggregates to consider
 #' @param ...   Arguments to be passed to the time series modelling function 
 #' (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.
 #' 
@@ -60,7 +61,8 @@
 thief <- function(y, m=frequency(y), h=m*2,
                comb=c("struc","mse","ols","bu","shr","sam"),
                usemodel=c("ets","arima","theta","naive","snaive"), 
-               forecastfunction=NULL, ...)
+               forecastfunction=NULL,
+               aggregatelist=NULL, ...)
 {
   comb <- match.arg(comb)
   if(is.null(forecastfunction))
@@ -73,23 +75,29 @@ thief <- function(y, m=frequency(y), h=m*2,
     stop("y must be a time series object")
   if(NCOL(y) > 1L)
     stop("y must be a univariate time series")
-
+  
   # Make sure the time series is seasonal
   if(m <= 1L)
     stop("Seasonal period (m) must be greater than 1")
   if(length(y) < 2*m)
     stop("I need at least 2 periods of data")
+  
+  # Check validity of aggregatelist argument
+  if(!is.null(aggregatelist))
+    if(!((1 %in% aggregatelist)&&(m %in% aggregatelist)))
+      stop("aggregatelist must include most disaggregate level (seasonal period m) 
+           AND most aggregated level (with seasonal period 1)")
 
   # Compute aggregate
-  aggy <- tsaggregates(y)
+  aggy <- tsaggregates(y, aggregatelist=aggregatelist)
 
   # Compute forecasts
   frc <- th.forecast(aggy, h=h, usemodel=usemodel, 
     forecastfunction=forecastfunction, ...)
-
+  
   # Reconcile forecasts and fitted values
-  bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals, returnall=FALSE)
-  fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals, returnall=FALSE)
+  bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals, returnall=FALSE, aggregatelist=aggregatelist)
+  fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals, returnall=FALSE, aggregatelist=aggregatelist)
 
   # Truncate to h forecasts
   tspb <- tsp(bts)

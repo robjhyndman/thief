@@ -5,7 +5,7 @@
 \title{Reconcile temporal hierarchical forecasts}
 \usage{
 reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
-  mse = NULL, residuals = NULL, returnall = TRUE)
+  mse = NULL, residuals = NULL, returnall = TRUE, aggregatelist = NULL)
 }
 \arguments{
 \item{forecasts}{List of forecasts. Each element must be a time series of forecasts,
@@ -32,6 +32,8 @@ is not needed. However, it will be used if not \code{NULL}.}
 
 \item{returnall}{If \code{TRUE}, a list of time series corresponding to the first argument
 is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.}
+
+\item{aggregatelist}{(optional) User-selected list of forecast aggregates to consider}
 }
 \value{
 List of reconciled forecasts in the same format as \code{forecast}.
@@ -62,10 +64,9 @@ for(i in seq_along(fc))
 }
 
 }
-\author{
-Rob J Hyndman
-}
 \seealso{
 \code{\link{thief}}, \code{\link{tsaggregates}}
 }
-
+\author{
+Rob J Hyndman
+}

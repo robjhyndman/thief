@@ -4,7 +4,8 @@
 \alias{tsaggregates}
 \title{Non-overlapping temporal aggregation of a time series}
 \usage{
-tsaggregates(y, m = frequency(y), align = c("end", "start"))
+tsaggregates(y, m = frequency(y), align = c("end", "start"),
+  aggregatelist = NULL)
 }
 \arguments{
 \item{y}{Univariate time series of class \code{ts}.}
@@ -14,6 +15,8 @@ tsaggregates(y, m = frequency(y), align = c("end", "start"))
 \item{align}{Indicates how the aggregates are to be aligned:
 either with the \code{start} of the series or the \code{end} of the series.
 For forecasting purposes, it should be set to \code{end}.}
+
+\item{aggregatelist}{User-selected list of aggregates to consider.}
 }
 \value{
 A list of time series. The first element is the series `y`,
@@ -27,10 +30,9 @@ Produces all temporal aggregations for frequencies greater than 1
 tsaggregates(USAccDeaths)
 
 }
-\author{
-Rob J Hyndman
-}
 \seealso{
 \code{\link{plot.tsaggregates}}
 }
-
+\author{
+Rob J Hyndman
+}

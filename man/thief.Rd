@@ -6,7 +6,7 @@
 \usage{
 thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   "bu", "shr", "sam"), usemodel = c("ets", "arima", "theta", "naive",
-  "snaive"), forecastfunction = NULL, ...)
+  "snaive"), forecastfunction = NULL, aggregatelist = NULL, ...)
 }
 \arguments{
 \item{y}{Time series input}
@@ -35,10 +35,12 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
 }}
 
 \item{forecastfunction}{User-defined function to be used instead of \code{usemodel}. The
-function must take a time series as the first argument, and the forecast horizon 
+function must take a time series as the first argument, and the forecast horizon
 as the second argument. It must return an object of class \code{forecast}.}
 
-\item{...}{Arguments to be passed to the time series modelling function 
+\item{aggregatelist}{User-selected list of forecast aggregates to consider}
+
+\item{...}{Arguments to be passed to the time series modelling function
 (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.}
 }
 \value{
@@ -49,10 +51,10 @@ Takes a time series as input and produces forecasts using
 the temporal hierarchical approach of Athanasopoulos et al (2016).
 }
 \details{
-This function computes the temporal aggregates of \code{y} using 
-\code{\link{tsaggregates}}, then calculates all forecasts using the model function 
-specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the 
-forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y} 
+This function computes the temporal aggregates of \code{y} using
+\code{\link{tsaggregates}}, then calculates all forecasts using the model function
+specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the
+forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y}
 are returned.
 }
 \examples{
@@ -69,10 +71,9 @@ plot(z)
 }
 
 }
-\author{
-Rob J Hyndman and Nikolaos Kourentzes
-}
 \seealso{
 \code{\link{reconcilethief}}
 }
-
+\author{
+Rob J Hyndman and Nikolaos Kourentzes
+}

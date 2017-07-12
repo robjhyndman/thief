@@ -51,4 +51,3 @@ for(i in 6:1)
 }
 }
 \keyword{datasets}
-

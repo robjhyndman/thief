@@ -1,0 +1,10 @@
+template:
+  params:
+    bootswatch: flatly
+
+authors:
+  Rob Hyndman:
+    href: http://robjhyndman.com
+  Nikolaos Kourentzes:
+    href: http://kourentzes.com/forecasting/
+

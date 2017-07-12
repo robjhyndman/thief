@@ -10,6 +10,17 @@ authors:
   Nikolaos Kourentzes:
     href: http://kourentzes.com/forecasting/
 
+navbar:
+  type: default
+  left:
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Change Log"
+      href: news/index.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/robjhyndman/thief
+
 reference:
   - title: Main function
     desc:  Produce forecasts using the THieF method

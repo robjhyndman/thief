@@ -55,7 +55,7 @@
 
 reconcilethief <- function(forecasts,
                comb=c("struc","mse","ols","bu","shr","sam"),
-               mse=NULL, residuals=NULL, returnall=TRUE, 
+               mse=NULL, residuals=NULL, returnall=TRUE,
                aggregatelist=NULL)
 {
   comb <- match.arg(comb)
@@ -78,7 +78,8 @@ reconcilethief <- function(forecasts,
         tspy <- tsp(residuals[[i]])
         m <- tspy[3]
         fullyears <- trunc(length(residuals[[i]])/m)
-        residuals[[i]] <- ts(utils::tail(residuals[[i]], fullyears*m), frequency=m, end=tspy[2])
+        residuals[[i]] <- ts(utils::tail(residuals[[i]], fullyears*m),
+          frequency=m, end=tspy[2])
       }
     }
     # Grab forecasts
@@ -146,7 +147,8 @@ reconcilethief <- function(forecasts,
       rmat <- matrix(0, nrow=0, ncol=nc)
       for(i in rev(seq_along(forecasts)))
         rmat <- rbind(rmat, matrix(residuals[[i]], ncol=nc))
-      bts <- hts::MinT(t(fmat), groups=grps, residual=t(rmat),  covariance=comb, keep='bottom')
+      bts <- hts::MinT(t(fmat), groups=grps, residual=t(rmat),
+        covariance=comb, keep='bottom')
     }
     # Turn resulting reconciled forecasts back into a ts object
     bts <- ts(c(t(bts)))

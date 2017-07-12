@@ -24,30 +24,30 @@
 #'   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
 #' }
 #' @param forecastfunction User-defined function to be used instead of \code{usemodel}. The
-#' function must take a time series as the first argument, and the forecast horizon 
+#' function must take a time series as the first argument, and the forecast horizon
 #' as the second argument. It must return an object of class \code{forecast}.
 #' @param aggregatelist User-selected list of forecast aggregates to consider
-#' @param ...   Arguments to be passed to the time series modelling function 
+#' @param ...   Arguments to be passed to the time series modelling function
 #' (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.
-#' 
-#' @details This function computes the temporal aggregates of \code{y} using 
-#' \code{\link{tsaggregates}}, then calculates all forecasts using the model function 
-#' specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the 
-#' forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y} 
+#'
+#' @details This function computes the temporal aggregates of \code{y} using
+#' \code{\link{tsaggregates}}, then calculates all forecasts using the model function
+#' specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the
+#' forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y}
 #' are returned.
 #'
 #' @return
 #'   forecast object.
-#' 
+#'
 #' @seealso \code{\link{reconcilethief}}
-#' 
+#'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # Select ARIMA models for all series using auto.arima()
 #' z <- thief(AEdemand[,12], usemodel='arima')
 #' plot(z)
-#' 
+#'
 #' # Use your own function
 #' ftbats <- function(y,h,...){forecast(tbats(y),h,...)}
 #' z <- thief(AEdemand[,12], forecastfunction=ftbats)
@@ -60,7 +60,7 @@
 
 thief <- function(y, m=frequency(y), h=m*2,
                comb=c("struc","mse","ols","bu","shr","sam"),
-               usemodel=c("ets","arima","theta","naive","snaive"), 
+               usemodel=c("ets","arima","theta","naive","snaive"),
                forecastfunction=NULL,
                aggregatelist=NULL, ...)
 {
@@ -75,29 +75,31 @@ thief <- function(y, m=frequency(y), h=m*2,
     stop("y must be a time series object")
   if(NCOL(y) > 1L)
     stop("y must be a univariate time series")
-  
+
   # Make sure the time series is seasonal
   if(m <= 1L)
     stop("Seasonal period (m) must be greater than 1")
   if(length(y) < 2*m)
     stop("I need at least 2 periods of data")
-  
+
   # Check validity of aggregatelist argument
   if(!is.null(aggregatelist))
     if(!((1 %in% aggregatelist)&&(m %in% aggregatelist)))
-      stop("aggregatelist must include most disaggregate level (seasonal period m) 
+      stop("aggregatelist must include most disaggregate level (seasonal period m)
            AND most aggregated level (with seasonal period 1)")
 
   # Compute aggregate
   aggy <- tsaggregates(y, aggregatelist=aggregatelist)
 
   # Compute forecasts
-  frc <- th.forecast(aggy, h=h, usemodel=usemodel, 
+  frc <- th.forecast(aggy, h=h, usemodel=usemodel,
     forecastfunction=forecastfunction, ...)
-  
+
   # Reconcile forecasts and fitted values
-  bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals, returnall=FALSE, aggregatelist=aggregatelist)
-  fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals, returnall=FALSE, aggregatelist=aggregatelist)
+  bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals,
+    returnall=FALSE, aggregatelist=aggregatelist)
+  fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals,
+    returnall=FALSE, aggregatelist=aggregatelist)
 
   # Truncate to h forecasts
   tspb <- tsp(bts)
@@ -138,7 +140,7 @@ th.forecast <- function(aggy, h=NULL, usemodel, forecastfunction, ...)
   freq <- unlist(lapply(aggy, frequency))
   m <- max(freq)
   AL <- m/freq
-  H <- m/AL*ceiling(h/m) 
+  H <- m/AL*ceiling(h/m)
 
   # Initialise
   frc <- fitted <- resid <- mseh <- vector("list",n.k)
@@ -192,10 +194,10 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
     {
       # Use HW if there is enough data and the data is seasonal
       if(frequency(y) > 1L & length(y) >= 2*frequency(y))
-        fit <- fc <- forecast::hw(y, h=h, level=80, 
+        fit <- fc <- forecast::hw(y, h=h, level=80,
                         initial='simple', alpha=0.2, beta=0.1, gamma=0.01)
       else # Otherwise just use Holt's
-        fit <- fc <- forecast::holt(y, h=h, level=80, 
+        fit <- fc <- forecast::holt(y, h=h, level=80,
                         initial='simple', alpha=0.2, beta=0.1)
     }
     else
@@ -205,12 +207,12 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
   {
     fit <- forecast::auto.arima(y, ...)
     fc <- forecast::forecast(fit, h=h, level=80)
-  } 
+  }
   else if (usemodel == "theta")
   {
     fc <- forecast::thetaf(y, h=h, level=80)
   }
-  else 
+  else
   {
     # Seasonal naive forecast
     if(usemodel=='snaive')

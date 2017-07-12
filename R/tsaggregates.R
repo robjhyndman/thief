@@ -34,13 +34,13 @@ tsaggregates <- function (y, m=frequency(y), align=c("end","start"),
   mout <- mout[mout <= n]
   if (length(mout) == 0L)
     stop("Series too short for aggregation")
-  
+
   # If user has specified aggregatelist, then consider only those aggregates
   if (!is.null(aggregatelist))
     mout <- mout[mout %in% aggregatelist]
   if (length(mout) == 0L)
     stop("No valid factors in aggregatelist argument")
-  
+
   k <- length(mout)
   y.out <- vector("list",k)
   y.out[[1L]] <- y
@@ -54,7 +54,8 @@ tsaggregates <- function (y, m=frequency(y), align=c("end","start"),
       start <- 1L
     nk <- trunc(n/mout[i])
     tmp <- matrix(y[start - 1L + seq_len(mout[i]*nk)], ncol=nk)
-    y.out[[i]] <- ts(colSums(tmp), frequency=m/mout[i], start=tsp(y)[1] + (start-1)/m)
+    y.out[[i]] <- ts(colSums(tmp), frequency=m/mout[i],
+      start=tsp(y)[1] + (start-1)/m)
   }
   names(y.out) <- paste("Period", m/mout)
   # Give names to common periods

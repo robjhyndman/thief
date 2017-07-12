@@ -1,3 +1,5 @@
+url: http://robjhyndman.github.io/thief
+
 template:
   params:
     bootswatch: flatly
@@ -8,3 +10,18 @@ authors:
   Nikolaos Kourentzes:
     href: http://kourentzes.com/forecasting/
 
+reference:
+  - title: Main function
+    desc:  Produce forecasts using the THieF method
+    contents:
+    - thief
+  - title: Helper functions
+    contents:
+    - tsaggregates
+    - reconcilethief
+  - title: Plotting functions
+    contents:
+    - plot.tsaggregates
+  - title: Data
+    contents:
+    - AEdemand

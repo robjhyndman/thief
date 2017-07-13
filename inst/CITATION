@@ -1,0 +1,23 @@
+
+year <- sub("-.*", "", meta$Date)
+if(!length(year))
+  year <- substr(Sys.Date(),1,4)
+vers <- paste("R package version", packageVersion("thief"))
+
+citHeader("To cite the thief package in publications, please use:")
+
+bibentry(bibtype = "Manual",
+  title = "{thief}: Temporal HIErarchical Forecasting",
+  author = "Rob J Hyndman and Nikolaos Kourentzes",
+  year = year,
+  note = vers,
+  url = "http://pkg.robjhyndman.com/thief")
+
+bibentry(bibtype = "Article",
+  title="Forecasting with temporal hierarchies",
+  author="Athanasopoulos, George and Hyndman, Rob J and Kourentzes, Nikolaos and Petropoulos, Fotios",
+  journal="European Journal of Operational Research",
+  volume="262",
+  number="1",
+  pages="60--74",
+  year="2017")

@@ -1,4 +1,5 @@
-# thief: Temporal HIErarchical Forecasting
+thief: Temporal HIErarchical Forecasting <img src="man/figures/logo.png" align="right" />
+======================
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/thief)](https://cran.r-project.org/package=thief)
 [![Downloads](http://cranlogs.r-pkg.org/badges/thief)](https://cran.r-project.org/package=thief)

@@ -1,4 +1,4 @@
-## V 0.3 (?? 2017)
+## V 0.3 (24 January 2018)
   * Improved handling of forecastfunction argument in thief()
   * Bug fixes
   * pkgdown documentation

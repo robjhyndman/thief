@@ -1,6 +1,7 @@
 thief: Temporal HIErarchical Forecasting <img src="man/figures/logo.png" align="right" />
 ======================
 
+[![Travis-CI Build Status](https://travis-ci.org/robjhyndman/thief.svg?branch=master)](https://travis-ci.org/robjhyndman/thief)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/thief)](https://cran.r-project.org/package=thief)
 [![Downloads](http://cranlogs.r-pkg.org/badges/thief)](https://cran.r-project.org/package=thief)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)

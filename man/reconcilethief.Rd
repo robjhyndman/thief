@@ -4,8 +4,9 @@
 \alias{reconcilethief}
 \title{Reconcile temporal hierarchical forecasts}
 \usage{
-reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
-  mse = NULL, residuals = NULL, returnall = TRUE, aggregatelist = NULL)
+reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr",
+  "sam"), mse = NULL, residuals = NULL, returnall = TRUE,
+  aggregatelist = NULL)
 }
 \arguments{
 \item{forecasts}{List of forecasts. Each element must be a time series of forecasts,

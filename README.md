@@ -19,14 +19,14 @@ This package implements the methods described in
 You can install the **stable** version on
 [R CRAN](https://cran.r-project.org/package=thief).
 
-```s
+```r
 install.packages('thief', dependencies = TRUE)
 ```
 
 You can install the **development** version from
 [Github](https://github.com/robjhyndman/thief)
 
-```s
+```r
 # install.packages("devtools")
 devtools::install_github("robjhyndman/thief")
 ```

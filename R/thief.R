@@ -100,6 +100,9 @@ thief <- function(y, m=frequency(y), h=m*2,
     returnall=FALSE, aggregatelist=aggregatelist)
   fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals,
     returnall=FALSE, aggregatelist=aggregatelist)
+  # Pad fits to same length as data
+  fits <- ts(c(rep(NA, length(y)-length(fits)), fits))
+  tsp(fits) <- tsp(y)
 
   # Truncate to h forecasts
   tspb <- tsp(bts)

@@ -15,5 +15,5 @@ Authors@R: c(
   person("Nikolaos", "Kourentzes", role=c("aut","cph")))
 BugReports: https://github.com/robjhyndman/thief/issues
 License: GPL-3
-URL: http://pkg.robjhyndman.com/thief, https://github.com/robjhyndman/thief
+URL: http://pkg.robjhyndman.com/thief, https://github.com/robjhyndman/thief, http://pkg.robjhyndman.com/thief/
 RoxygenNote: 6.1.1

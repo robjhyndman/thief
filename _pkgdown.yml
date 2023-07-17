@@ -1,38 +1,43 @@
 url: http://robjhyndman.github.io/thief
-
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  theme: tango
+  bootswatch: flatly
+  bslib:
+    base_font: {google: "Fira Sans"}
+    heading_font: {google: "Fira Sans"}
+    code_font: "Hack, mono"
+    primary: "#234460"
+    link-color: "#234460"
+  includes:
+    in_header: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hack-font@3/build/web/hack-subset.css">
 
+authors:
 authors:
   Rob Hyndman:
     href: http://robjhyndman.com
   Nikolaos Kourentzes:
     href: http://kourentzes.com/forecasting/
-
 navbar:
   type: default
   left:
-    - text: "Reference"
-      href: reference/index.html
-    - text: "Change Log"
-      href: news/index.html
+  - text: Reference
+    href: reference/index.html
+  - text: Change Log
+    href: news/index.html
   right:
-    - icon: fa-github fa-lg
-      href: https://github.com/robjhyndman/thief
-
+  - icon: fa-github fa-lg
+    href: https://github.com/robjhyndman/thief
 reference:
-  - title: Main function
-    desc:  Produce forecasts using the THieF method
-    contents:
-    - thief
-  - title: Helper functions
-    contents:
-    - tsaggregates
-    - reconcilethief
-  - title: Plotting functions
-    contents:
-    - plot.tsaggregates
-  - title: Data
-    contents:
-    - AEdemand
+- title: Main function
+  desc: Produce forecasts using the THieF method
+  contents: thief
+- title: Helper functions
+  contents:
+  - tsaggregates
+  - reconcilethief
+- title: Plotting functions
+  contents: plot.tsaggregates
+- title: Data
+  contents: AEdemand
+

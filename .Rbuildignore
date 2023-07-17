@@ -4,3 +4,6 @@
 Makefile
 docs
 .travis.yml
+^docs$
+^pkgdown$
+^\.github$

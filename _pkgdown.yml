@@ -13,7 +13,6 @@ template:
     in_header: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hack-font@3/build/web/hack-subset.css">
 
 authors:
-authors:
   Rob Hyndman:
     href: http://robjhyndman.com
   Nikolaos Kourentzes:

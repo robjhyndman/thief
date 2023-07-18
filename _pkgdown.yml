@@ -18,7 +18,7 @@ authors:
   Nikolaos Kourentzes:
     href: http://kourentzes.com/forecasting/
 navbar:
-  type: default
+  type: light
   left:
   - text: Reference
     href: reference/index.html
@@ -39,4 +39,3 @@ reference:
   contents: plot.tsaggregates
 - title: Data
   contents: AEdemand
-

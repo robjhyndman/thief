@@ -52,7 +52,12 @@ test_that("thief accepts a user-supplied forecast function and aggregatelist", {
   z <- thief(USAccDeaths, h = 12, forecastfunction = fnaive)
   expect_s3_class(z, "forecast")
   expect_equal(z$method, "THieF-FNAIVE")
-  z2 <- thief(USAccDeaths, h = 12, usemodel = "naive", aggregatelist = c(1, 3, 12))
+  z2 <- thief(
+    USAccDeaths,
+    h = 12,
+    usemodel = "naive",
+    aggregatelist = c(1, 3, 12)
+  )
   expect_length(z2$mean, 12)
 })
 
@@ -66,7 +71,10 @@ test_that("thief validates input", {
   expect_error(thief(AEdemand[, 1:2]), "univariate")
   expect_error(thief(ts(1:48)), "greater than 1")
   expect_error(thief(ts(1:10, frequency = 12)), "at least 2 periods")
-  expect_error(thief(USAccDeaths, aggregatelist = c(2, 4)), "aggregatelist must include")
+  expect_error(
+    thief(USAccDeaths, aggregatelist = c(2, 4)),
+    "aggregatelist must include"
+  )
   expect_error(thief(USAccDeaths, comb = "foo"), "should be one of")
   expect_error(thief(USAccDeaths, usemodel = "foo"), "should be one of")
 })
@@ -77,13 +85,22 @@ test_that("the m argument of thief is deprecated", {
     "deprecated"
   )
   expect_equal(z$mean, thief(USAccDeaths, h = 6, usemodel = "naive")$mean)
-  expect_error(suppressWarnings(thief(USAccDeaths, m = 4)), "m must equal frequency")
+  expect_error(
+    suppressWarnings(thief(USAccDeaths, m = 4)),
+    "m must equal frequency"
+  )
 })
 
 test_that("thief passes ... to theta, naive and snaive", {
   for (model in c("theta", "naive", "snaive")) {
     plain <- thief(USAccDeaths, h = 6, usemodel = model)
-    boxcox <- thief(USAccDeaths, h = 6, usemodel = model, lambda = 0, biasadj = TRUE)
+    boxcox <- thief(
+      USAccDeaths,
+      h = 6,
+      usemodel = model,
+      lambda = 0,
+      biasadj = TRUE
+    )
     expect_false(isTRUE(all.equal(plain$mean, boxcox$mean)))
   }
 })

@@ -46,12 +46,14 @@
 #' \dontrun{
 #'
 #' # Select ARIMA models for all series using auto.arima()
-#' z <- thief(AEdemand[,12], usemodel='arima')
+#' z <- thief(AEdemand[, 12], usemodel = "arima")
 #' plot(z)
 #'
 #' # Use your own function
-#' ftbats <- function(y,h,...){forecast(tbats(y),h,...)}
-#' z <- thief(AEdemand[,12], forecastfunction=ftbats)
+#' ftbats <- function(y, h, ...) {
+#'   forecast(tbats(y), h, ...)
+#' }
+#' z <- thief(AEdemand[, 12], forecastfunction = ftbats)
 #' plot(z)
 #' }
 #'
@@ -59,109 +61,143 @@
 #' @import forecast
 #' @author Rob J Hyndman and Nikolaos Kourentzes
 
-thief <- function(y, m=NULL, h=frequency(y)*2,
-               comb=c("struc","mse","ols","bu","shr","sam"),
-               usemodel=c("ets","arima","theta","naive","snaive"),
-               forecastfunction=NULL,
-               aggregatelist=NULL, ...)
-{
+thief <- function(
+  y,
+  m = NULL,
+  h = frequency(y) * 2,
+  comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
+  usemodel = c("ets", "arima", "theta", "naive", "snaive"),
+  forecastfunction = NULL,
+  aggregatelist = NULL,
+  ...
+) {
   comb <- match.arg(comb)
-  if(is.null(forecastfunction))
+  if (is.null(forecastfunction)) {
     usemodel <- match.arg(usemodel)
-  else
+  } else {
     usemodel <- deparse(substitute(forecastfunction))
+  }
 
   # Check input is a univariate time series
-  if(!inherits(y,"ts"))
+  if (!inherits(y, "ts")) {
     stop("y must be a time series object")
-  if(NCOL(y) > 1L)
+  }
+  if (NCOL(y) > 1L) {
     stop("y must be a univariate time series")
+  }
 
   # The seasonal period is always the frequency of y
-  if(!is.null(m))
-  {
-    .Deprecated(msg="The m argument of thief() is deprecated and will be removed. The seasonal period is taken from frequency(y); use ts() to set it.")
-    if(m != frequency(y))
-      stop("m must equal frequency(y). To use a different seasonal period, set the frequency of y using ts()")
+  if (!is.null(m)) {
+    .Deprecated(
+      msg = "The m argument of thief() is deprecated and will be removed. The seasonal period is taken from frequency(y); use ts() to set it."
+    )
+    if (m != frequency(y)) {
+      stop(
+        "m must equal frequency(y). To use a different seasonal period, set the frequency of y using ts()"
+      )
+    }
   }
   m <- frequency(y)
 
   # Make sure the time series is seasonal
-  if(m <= 1L)
+  if (m <= 1L) {
     stop("Seasonal period (m) must be greater than 1")
-  if(length(y) < 2*m)
+  }
+  if (length(y) < 2 * m) {
     stop("I need at least 2 periods of data")
+  }
 
   # Check validity of aggregatelist argument
-  if(!is.null(aggregatelist))
-    if(!((1 %in% aggregatelist)&&(m %in% aggregatelist)))
-      stop("aggregatelist must include most disaggregate level (seasonal period m)
-           AND most aggregated level (with seasonal period 1)")
+  if (!is.null(aggregatelist)) {
+    if (!((1 %in% aggregatelist) && (m %in% aggregatelist))) {
+      stop(
+        "aggregatelist must include most disaggregate level (seasonal period m)
+           AND most aggregated level (with seasonal period 1)"
+      )
+    }
+  }
 
   # Compute aggregate
-  aggy <- tsaggregates(y, aggregatelist=aggregatelist)
+  aggy <- tsaggregates(y, aggregatelist = aggregatelist)
 
   # Compute forecasts
-  frc <- th.forecast(aggy, h=h, usemodel=usemodel,
-    forecastfunction=forecastfunction, ...)
+  frc <- th.forecast(
+    aggy,
+    h = h,
+    usemodel = usemodel,
+    forecastfunction = forecastfunction,
+    ...
+  )
 
   # Reconcile forecasts and fitted values
-  bts <- reconcilethief(frc$forecast, comb, frc$mse, frc$residuals,
-    returnall=FALSE, aggregatelist=aggregatelist)
-  fits <- reconcilethief(frc$fitted, comb, frc$mse, frc$residuals,
-    returnall=FALSE, aggregatelist=aggregatelist)
+  bts <- reconcilethief(
+    frc$forecast,
+    comb,
+    frc$mse,
+    frc$residuals,
+    returnall = FALSE,
+    aggregatelist = aggregatelist
+  )
+  fits <- reconcilethief(
+    frc$fitted,
+    comb,
+    frc$mse,
+    frc$residuals,
+    returnall = FALSE,
+    aggregatelist = aggregatelist
+  )
   # Pad fits to same length as data
-  fits <- ts(c(rep(NA, length(y)-length(fits)), fits))
+  fits <- ts(c(rep(NA, length(y) - length(fits)), fits))
   tsp(fits) <- tsp(y)
 
   # Truncate to h forecasts
   tspb <- tsp(bts)
-  bts <- ts(bts[1:h], start=tspb[1], frequency=tspb[3])
+  bts <- ts(bts[1:h], start = tspb[1], frequency = tspb[3])
 
   # Construct forecast object to return
-  out <- structure(list(x=y, mean=bts, fitted=fits, residuals=y-fits),
-    class='forecast')
-  out$method <- paste("THieF-",toupper(usemodel),sep="")
+  out <- structure(
+    list(x = y, mean = bts, fitted = fits, residuals = y - fits),
+    class = "forecast"
+  )
+  out$method <- paste("THieF-", toupper(usemodel), sep = "")
   return(out)
 }
 
 #-------------------------------------------------
-th.forecast <- function(aggy, h=NULL, usemodel, forecastfunction, ...)
-{
-# Produce forecasts for multiple temporal aggregation levels with predefined models
-#
-# Inputs:
-#   aggy        List of time series to be forecast
-#   h           Forecast horizon. Default is m*2
-#   usemodel    Model used for forecasting each aggregation level
-#
-# Outputs:
-#   frc         Uncombined temporal hierarchy forecasts
-#   fitted      Uncombined temporal hierarchy fitted values
-#   residual    Uncombined temporal hierarchy residuals
-#   mse         Mean squared errors for each temporal aggregation level
-#   mseh        Mean squared errors per horizon for each temporal aggregation level
-#
-# Example:
-#   aggy <- tsaggregates(USAccDeaths)
-#   th.forecast(aggy,h=20)
-#
-# Nikolaos Kourentzes and Rob J Hyndman
+th.forecast <- function(aggy, h = NULL, usemodel, forecastfunction, ...) {
+  # Produce forecasts for multiple temporal aggregation levels with predefined models
+  #
+  # Inputs:
+  #   aggy        List of time series to be forecast
+  #   h           Forecast horizon. Default is m*2
+  #   usemodel    Model used for forecasting each aggregation level
+  #
+  # Outputs:
+  #   frc         Uncombined temporal hierarchy forecasts
+  #   fitted      Uncombined temporal hierarchy fitted values
+  #   residual    Uncombined temporal hierarchy residuals
+  #   mse         Mean squared errors for each temporal aggregation level
+  #   mseh        Mean squared errors per horizon for each temporal aggregation level
+  #
+  # Example:
+  #   aggy <- tsaggregates(USAccDeaths)
+  #   th.forecast(aggy,h=20)
+  #
+  # Nikolaos Kourentzes and Rob J Hyndman
 
   # Calculate forecast horizons
   n.k <- length(aggy)
   freq <- unlist(lapply(aggy, frequency))
   m <- max(freq)
-  AL <- m/freq
-  H <- m/AL*ceiling(h/m)
+  AL <- m / freq
+  H <- m / AL * ceiling(h / m)
 
   # Initialise
-  frc <- fitted <- resid <- mseh <- vector("list",n.k)
-  mse <- vector("numeric",n.k)
+  frc <- fitted <- resid <- mseh <- vector("list", n.k)
+  mse <- vector("numeric", n.k)
 
   # Model estimation and forecasts
-  for (k in 1:n.k)
-  {
+  for (k in 1:n.k) {
     temp <- th.forecast.loop(aggy[[k]], H[[k]], usemodel, forecastfunction, ...)
     frc[[k]] <- temp$frc
     fitted[[k]] <- temp$fitted
@@ -171,92 +207,113 @@ th.forecast <- function(aggy, h=NULL, usemodel, forecastfunction, ...)
   }
 
   # Return forecasts
-  #names(frc) <- names(fitted) <- names(resid) <- names(mseh) <- names(mse) <- names(aggy)
+  # names(frc) <- names(fitted) <- names(resid) <- names(mseh) <- names(mse) <- names(aggy)
 
-  return(list(forecast=frc,fitted=fitted,residuals=resid,mse=mse,mseh=mseh))
+  return(list(
+    forecast = frc,
+    fitted = fitted,
+    residuals = resid,
+    mse = mse,
+    mseh = mseh
+  ))
 }
 
 #-------------------------------------------------
-th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
-# Loop for model forecasts
-# Produce forecasts and other information for univariate series y
-# Forecast horizon h
-# Return list of forecasts, fitted values, residuals, mse, etc.
+th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...) {
+  # Loop for model forecasts
+  # Produce forecasts and other information for univariate series y
+  # Forecast horizon h
+  # Return list of forecasts, fitted values, residuals, mse, etc.
 
   m <- frequency(y)
 
-  if(!is.null(forecastfunction))
-  {
+  if (!is.null(forecastfunction)) {
     fc <- forecastfunction(y, h, ...)
     # Check if PI returned.
-    if(!is.null(fc$lower))
-    {
+    if (!is.null(fc$lower)) {
       # Check only 80% PI is saved
-      if(is.element(80,fc$level))
-        fc$lower <- as.matrix(fc$lower)[,fc$level==80]
-      else
+      if (is.element(80, fc$level)) {
+        fc$lower <- as.matrix(fc$lower)[, fc$level == 80]
+      } else {
         fc$lower <- NULL
+      }
     }
-  }
-  else if (usemodel=="ets")
-  {
-    fit <- try(forecast::ets(y, ...), silent=TRUE)
+  } else if (usemodel == "ets") {
+    fit <- try(forecast::ets(y, ...), silent = TRUE)
     # Do something simpler if ets model doesn't work
     # This is only necessary for versions of the package before 22 Aug 2016 (7.2beta)
-    if(is.element("try-error",class(fit)))
-    {
+    if (is.element("try-error", class(fit))) {
       # Use HW if there is enough data and the data is seasonal
-      if(frequency(y) > 1L & length(y) >= 2*frequency(y))
-        fit <- fc <- forecast::hw(y, h=h, level=80,
-                        initial='simple', alpha=0.2, beta=0.1, gamma=0.01)
-      else # Otherwise just use Holt's
-        fit <- fc <- forecast::holt(y, h=h, level=80,
-                        initial='simple', alpha=0.2, beta=0.1)
+      if (frequency(y) > 1L & length(y) >= 2 * frequency(y)) {
+        fit <- fc <- forecast::hw(
+          y,
+          h = h,
+          level = 80,
+          initial = "simple",
+          alpha = 0.2,
+          beta = 0.1,
+          gamma = 0.01
+        )
+      } else {
+        # Otherwise just use Holt's
+        fit <- fc <- forecast::holt(
+          y,
+          h = h,
+          level = 80,
+          initial = "simple",
+          alpha = 0.2,
+          beta = 0.1
+        )
+      }
+    } else {
+      fc <- forecast::forecast(fit, h = h, level = 80)
     }
-    else
-      fc <- forecast::forecast(fit, h=h, level=80)
-  }
-  else if(usemodel=="arima")
-  {
+  } else if (usemodel == "arima") {
     fit <- forecast::auto.arima(y, ...)
-    fc <- forecast::forecast(fit, h=h, level=80)
-  }
-  else if (usemodel == "theta")
-  {
-    fc <- forecast::thetaf(y, h=h, level=80, ...)
-  }
-  else
-  {
+    fc <- forecast::forecast(fit, h = h, level = 80)
+  } else if (usemodel == "theta") {
+    fc <- forecast::thetaf(y, h = h, level = 80, ...)
+  } else {
     # Seasonal naive forecast
-    if(usemodel=='snaive')
-      fc <- forecast::snaive(y, h=h, level=80, ...)
-    # Naive forecast
-    else
-      fc <- forecast::naive(y, h=h, level=80, ...)
+    if (usemodel == "snaive") {
+      # Naive forecast
+      fc <- forecast::snaive(y, h = h, level = 80, ...)
+    } else {
+      fc <- forecast::naive(y, h = h, level = 80, ...)
+    }
   }
 
   # Calculate fitted residuals and MSE
   fitted <- fitted(fc)
-  if(is.null(fitted) & !is.null(fc$residuals))
+  if (is.null(fitted) & !is.null(fc$residuals)) {
     fitted <- y - fc$residuals
-  if(!is.null(fitted))
+  }
+  if (!is.null(fitted)) {
     resid <- y - fitted
-  else
+  } else {
     resid <- NULL
-  mse <- mean(resid^2, na.rm=TRUE)
+  }
+  mse <- mean(resid^2, na.rm = TRUE)
 
   # Only keep full years of fitted values and residuals
   # Remove partial year from start
   tspy <- tsp(y)
   fullyears <- trunc(length(y) / m)
-  fitted <- ts(utils::tail(fitted, fullyears*m), frequency=m, end=tspy[2])
-  resid <- ts(utils::tail(resid, fullyears*m), frequency=m, end=tspy[2])
+  fitted <- ts(utils::tail(fitted, fullyears * m), frequency = m, end = tspy[2])
+  resid <- ts(utils::tail(resid, fullyears * m), frequency = m, end = tspy[2])
 
   # Compute MSE and MSEH
-  if(!is.null(fc$lower))
-    mseh <- ((fc$mean - fc$lower)/stats::qnorm(0.9))^2
-  else
+  if (!is.null(fc$lower)) {
+    mseh <- ((fc$mean - fc$lower) / stats::qnorm(0.9))^2
+  } else {
     mseh <- NULL
+  }
 
-  return(list(frc=fc$mean,mse=mse,mseh=mseh,fitted=fitted,resid=resid))
+  return(list(
+    frc = fc$mean,
+    mse = mse,
+    mseh = mseh,
+    fitted = fitted,
+    resid = resid
+  ))
 }

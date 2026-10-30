@@ -1,7 +1,10 @@
 test_that("tsaggregates returns named aggregates that conserve totals", {
   agg <- tsaggregates(USAccDeaths)
   expect_s3_class(agg, "tsaggregates")
-  expect_named(agg, c("Monthly", "2-Monthly", "Quarterly", "4-Monthly", "Biannual", "Annual"))
+  expect_named(
+    agg,
+    c("Monthly", "2-Monthly", "Quarterly", "4-Monthly", "Biannual", "Annual")
+  )
   expect_equal(agg$Monthly, USAccDeaths)
   expect_equal(frequency(agg$Annual), 1)
   expect_length(agg$Annual, 6)
@@ -38,7 +41,10 @@ test_that("tsaggregates works with a non-ts input and explicit m", {
 test_that("tsaggregates errors on bad input", {
   expect_error(tsaggregates(USAccDeaths, aggregatelist = 5), "No valid factors")
   expect_error(tsaggregates(1:5, m = 0), "positive whole number")
-  expect_error(tsaggregates(ts(1:800, frequency = 365.25)), "positive whole number")
+  expect_error(
+    tsaggregates(ts(1:800, frequency = 365.25)),
+    "positive whole number"
+  )
   expect_error(tsaggregates(1:5, m = 12), NA)
   expect_error(tsaggregates(1:5, m = c(4, 12)), "positive whole number")
 })

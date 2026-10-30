@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' deathagg <- tsaggregates(USAccDeaths)
-#' plot(deathagg, series=c(1,2,4,6))
+#' plot(deathagg, series = c(1, 2, 4, 6))
 #'
 #' library(ggplot2)
 #' autoplot(deathagg)
@@ -22,17 +22,19 @@
 #' @importFrom stats plot.ts
 #' @importFrom graphics plot
 
-plot.tsaggregates <- function(x, series="all", ...)
-{
-  tmp <- mts.from.tsaggregates(x,series,...)
+plot.tsaggregates <- function(x, series = "all", ...) {
+  tmp <- mts.from.tsaggregates(x, series, ...)
   args <- tmp$args
   args$x <- tmp$tsmat
-  if(!is.element("main",names(args)))
+  if (!is.element("main", names(args))) {
     args$main <- deparse(substitute(x))
-  if(length(tmp$series)==1L & !is.element("ylab",names(args)))
+  }
+  if (length(tmp$series) == 1L & !is.element("ylab", names(args))) {
     args$ylab <- names(x)[tmp$series]
-  if(length(tmp$series) <= 6L & !is.element("nc",names(args)))
+  }
+  if (length(tmp$series) <= 6L & !is.element("nc", names(args))) {
     args$nc <- 1L
+  }
   do.call(plot.ts, args)
 }
 
@@ -41,73 +43,75 @@ plot.tsaggregates <- function(x, series="all", ...)
 #' @method autoplot tsaggregates
 #' @export
 
-autoplot.tsaggregates <- function(object, series="all", ...)
-{
-  tmp <- mts.from.tsaggregates(object,series,...)
+autoplot.tsaggregates <- function(object, series = "all", ...) {
+  tmp <- mts.from.tsaggregates(object, series, ...)
   args <- tmp$args
   args$object <- tmp$tsmat
   args$facets <- TRUE
-  if(!is.element("main",names(args)))
+  if (!is.element("main", names(args))) {
     args$main <- deparse(substitute(object))
-  if(!is.element("ylab",names(args)))
-  {
-    if(length(tmp$series)==1L)
+  }
+  if (!is.element("ylab", names(args))) {
+    if (length(tmp$series) == 1L) {
       args$ylab <- names(object)[tmp$series]
-    else
+    } else {
       args$ylab <- ""
+    }
   }
   do.call(ggplot2::autoplot, args)
 }
 
 #' @importFrom stats approx frequency is.ts time ts tsp "tsp<-"
 
-mts.from.tsaggregates <- function(x, series, ...)
-{
+mts.from.tsaggregates <- function(x, series, ...) {
   nseries <- length(x)
 
-  if(identical(series,"all"))
+  if (identical(series, "all")) {
     series <- seq_len(nseries)
-  if(length(series) > 10L)
+  }
+  if (length(series) > 10L) {
     stop("Too many series to plot. Please select a subset.")
-  if(min(series) < 1L | max(series) > nseries)
-    stop(paste("series should be between 1 and",nseries))
+  }
+  if (min(series) < 1L | max(series) > nseries) {
+    stop(paste("series should be between 1 and", nseries))
+  }
 
   args <- list(...)
 
   # Create linearly interpolated mts object
   times <- time(x[[1]])
-  tsmat <- matrix(0, nrow=length(times), ncol=nseries)
+  tsmat <- matrix(0, nrow = length(times), ncol = nseries)
 
-  tsmat[,1] <- x[[1]]
-  if(nseries > 1L)
-  {
-    for(j in 2:nseries)
-    {
-      if(length(x[[j]]) > 1L)
-        tsmat[,j] <- approx(time(x[[j]]), x[[j]], xout=times)$y
-      else # approx() needs two points, so show the single value as a constant
-        tsmat[,j] <- as.numeric(x[[j]])
+  tsmat[, 1] <- x[[1]]
+  if (nseries > 1L) {
+    for (j in 2:nseries) {
+      if (length(x[[j]]) > 1L) {
+        tsmat[, j] <- approx(time(x[[j]]), x[[j]], xout = times)$y
+      } else {
+        # approx() needs two points, so show the single value as a constant
+        tsmat[, j] <- as.numeric(x[[j]])
+      }
     }
   }
   tsmat <- ts(tsmat)
   tsp(tsmat) <- tsp(x[[1]])
   colnames(tsmat) <- names(x)
-  tsmat <- tsmat[,series]
+  tsmat <- tsmat[, series]
 
-  if(!is.element("xlab",names(args)))
-  {
+  if (!is.element("xlab", names(args))) {
     m <- frequency(x[[1]])
-    if(m == 12L | m==4L | m==8760L | m==17520L)
+    if (m == 12L | m == 4L | m == 8760L | m == 17520L) {
       args$xlab <- "Year"
-    else if(m==7L)
+    } else if (m == 7L) {
       args$xlab <- "Week"
-    else if(m==24L | m==48L)
+    } else if (m == 24L | m == 48L) {
       args$xlab <- "Day"
-    else if(m==168L | m==336L)
+    } else if (m == 168L | m == 336L) {
       args$xlab <- "Week"
-    else
+    } else {
       args$xlab <- "Time"
+    }
   }
 
-  return(list(tsmat=tsmat, args=args, series=series))
+  return(list(tsmat = tsmat, args = args, series = series))
 }

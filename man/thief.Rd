@@ -69,12 +69,14 @@ are returned.
 \dontrun{
 
 # Select ARIMA models for all series using auto.arima()
-z <- thief(AEdemand[,12], usemodel='arima')
+z <- thief(AEdemand[, 12], usemodel = "arima")
 plot(z)
 
 # Use your own function
-ftbats <- function(y,h,...){forecast(tbats(y),h,...)}
-z <- thief(AEdemand[,12], forecastfunction=ftbats)
+ftbats <- function(y, h, ...) {
+  forecast(tbats(y), h, ...)
+}
+z <- thief(AEdemand[, 12], forecastfunction = ftbats)
 plot(z)
 }
 

@@ -55,18 +55,19 @@ aggts <- tsaggregates(USAccDeaths)
 
 # Compute forecasts
 fc <- list()
-for(i in seq_along(aggts))
-  fc[[i]] <- forecast(auto.arima(aggts[[i]]), h=2*frequency(aggts[[i]]))
+for (i in seq_along(aggts)) {
+  fc[[i]] <- forecast(auto.arima(aggts[[i]]), h = 2 * frequency(aggts[[i]]))
+}
 
 # Reconcile forecasts
 reconciled <- reconcilethief(fc)
 
 # Plot forecasts before and after reconcilation
-par(mfrow=c(2,3))
-for(i in seq_along(fc))
+par(mfrow = c(2, 3))
+for (i in seq_along(fc))
 {
-  plot(reconciled[[i]], main=names(aggts)[i])
-  lines(fc[[i]]$mean, col='red')
+  plot(reconciled[[i]], main = names(aggts)[i])
+  lines(fc[[i]]$mean, col = "red")
 }
 
 }

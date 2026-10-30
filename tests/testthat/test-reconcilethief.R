@@ -5,7 +5,10 @@ test_that("reconcilethief handles length-1 series with rounding differences in s
   fc <- lapply(tsaggregates(y), function(x) {
     forecast::forecast(forecast::ets(x), h = frequency(x))
   })
-  expect_false(identical(tsp(fc[[6]]$mean)[1], tsp(tsaggregates(fc[[1]]$mean)[[6]])[1]))
+  expect_false(identical(
+    tsp(fc[[6]]$mean)[1],
+    tsp(tsaggregates(fc[[1]]$mean)[[6]])[1]
+  ))
   expect_no_warning(rec <- reconcilethief(fc))
   annual <- rec[[length(rec)]]
   expect_length(annual$mean, 1)
@@ -83,11 +86,16 @@ test_that("reconcilethief does not depend on the order of the input list", {
   mse <- vapply(fc, function(f) mean(residuals(f)^2), numeric(1))
   for (comb in c("struc", "mse")) {
     expect_no_warning(rec <- reconcilethief(fc, comb = comb, mse = mse))
-    expect_no_warning(rec2 <- reconcilethief(rev(fc), comb = comb, mse = rev(mse)))
+    expect_no_warning(
+      rec2 <- reconcilethief(rev(fc), comb = comb, mse = rev(mse))
+    )
     expect_equal(rec2, rec)
   }
 })
 
 test_that("reconcilethief gives a clear error when comb = 'mse' has no mse", {
-  expect_error(reconcilethief(make_fc(), comb = "mse"), "needs the mse argument")
+  expect_error(
+    reconcilethief(make_fc(), comb = "mse"),
+    "needs the mse argument"
+  )
 })

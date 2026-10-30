@@ -1,3 +1,7 @@
+## Development version
+  * Fixed warning and incorrect prediction intervals in reconcilethief() when
+    the forecast horizon is one period at the annual level (#19)
+
 ## V 0.3 (24 January 2018)
   * Improved handling of forecastfunction argument in thief()
   * Bug fixes

@@ -8,6 +8,9 @@ Depends:
     forecast (>= 7.2)
 Imports:
     hts, ggplot2
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 LazyData: yes
 ByteCompile: TRUE
 Authors@R: c(

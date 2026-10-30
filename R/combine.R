@@ -167,7 +167,7 @@ reconcilethief <- function(forecasts,
   {
     if(!returnall)
     {
-      adj <- bts - origf[[1]]$mean
+      adj <- as.numeric(bts) - as.numeric(origf[[1]]$mean)
       origf[[1]]$mean <- bts
       if(!is.null(origf[[1]]$lower))
       {
@@ -181,7 +181,7 @@ reconcilethief <- function(forecasts,
       allts <- tsaggregates(bts, aggregatelist=aggregatelist)
       for(i in seq_along(origf))
       {
-        adj <- allts[[i]] - origf[[i]]$mean
+        adj <- as.numeric(allts[[i]]) - as.numeric(origf[[i]]$mean)
         origf[[i]]$mean <- allts[[i]]
         if(!is.null(origf[[i]]$lower))
         {

@@ -15,7 +15,10 @@ from 7 November 2010 to 7 June 2015.
 \examples{
 library(ggplot2)
 autoplot(AEdemand, xlab="Year", ylab="Demand ('000)") +
-  ggtitle("Accident & Emergency Demand in the UK")
+  ggtitle("Accident & Emergency Demand in the UK") +
+  theme(legend.position = "bottom", legend.title = element_blank(),
+        legend.text = element_text(size = 6), legend.key.width = unit(0.4, "cm")) +
+  guides(colour = guide_legend(ncol = 2))
 
 \dontrun{
 

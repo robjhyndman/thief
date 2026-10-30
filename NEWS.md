@@ -24,4 +24,6 @@
 
 # thief 0.1
 
+<p class="text-muted">GitHub release: 2016-08-22</p>
+
 * First version on github

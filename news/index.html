@@ -29,7 +29,40 @@
       <small>Source: <a href="https://github.com/robjhyndman/thief/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-  </main></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="thief-development-version">thief (development version)<a class="anchor" aria-label="anchor" href="#thief-development-version"></a></h2>
+<ul><li>Fixed warning and incorrect prediction intervals in <code><a href="../reference/reconcilethief.html">reconcilethief()</a></code> when the forecast horizon is one period at the annual level (<a href="https://github.com/robjhyndman/thief/issues/19" class="external-link">#19</a>)</li>
+<li>Deprecated the <code>m</code> argument of <code><a href="../reference/thief.html">thief()</a></code>. The seasonal period is taken from <code>frequency(y)</code>.</li>
+<li>
+<code><a href="../reference/thief.html">thief()</a></code> with <code>comb = "shr"</code> or <code>"sam"</code> now works with naive and snaive models</li>
+<li>
+<code><a href="../reference/reconcilethief.html">reconcilethief()</a></code> now gives correct results when the forecasts are not ordered from finest to coarsest</li>
+<li>
+<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> of a <code>tsaggregates</code> object no longer show length-1 aggregates as zero</li>
+<li>
+<code><a href="../reference/tsaggregates.html">tsaggregates()</a></code> now aggregates the first series when <code>aggregatelist</code> omits 1, and gives an error for an invalid <code>m</code>
+</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3" id="thief-03">thief 0.3<a class="anchor" aria-label="anchor" href="#thief-03"></a></h2><p class="text-muted">CRAN release: 2018-01-24</p>
+<ul><li>Improved handling of <code>forecastfunction</code> argument in <code><a href="../reference/thief.html">thief()</a></code>
+</li>
+<li>Bug fixes</li>
+<li>pkgdown documentation</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2" id="thief-02">thief 0.2<a class="anchor" aria-label="anchor" href="#thief-02"></a></h2><p class="text-muted">CRAN release: 2016-09-07</p>
+<ul><li>First version on CRAN</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1" id="thief-01">thief 0.1<a class="anchor" aria-label="anchor" href="#thief-01"></a></h2>
+<p class="text-muted">
+GitHub release: 2016-08-22
+</p>
+<ul><li>First version on github</li>
+</ul></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

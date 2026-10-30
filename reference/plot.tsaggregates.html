@@ -48,7 +48,7 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p><code>tsaggregates</code> object, produced by <code><a href="tsaggregates.html">tsaggregates</a></code>.</p></dd>
+<dd><p><code>tsaggregates</code> object, produced by <code><a href="tsaggregates.html">tsaggregates()</a></code>.</p></dd>
 
 
 <dt id="arg-series">series<a class="anchor" aria-label="anchor" href="#arg-series"></a></dt>
@@ -56,12 +56,12 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Other arguments passed to <code><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></code>
-or <code><a href="https://pkg.robjhyndman.com/forecast/reference/autoplot.ts.html" class="external-link">autoplot.ts</a></code>.</p></dd>
+<dd><p>Other arguments passed to <code><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">stats::plot.ts()</a></code>
+or <code><a href="https://pkg.robjhyndman.com/forecast/reference/autoplot.ts.html" class="external-link">forecast::autoplot.ts()</a></code>.</p></dd>
 
 
 <dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
-<dd><p><code>tsaggregates</code> object, produced by <code><a href="tsaggregates.html">tsaggregates</a></code>.</p></dd>
+<dd><p><code>tsaggregates</code> object, produced by <code><a href="tsaggregates.html">tsaggregates()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -72,7 +72,7 @@ or <code><a href="https://pkg.robjhyndman.com/forecast/reference/autoplot.ts.htm
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">deathagg</span> <span class="op">&lt;-</span> <span class="fu"><a href="tsaggregates.html">tsaggregates</a></span><span class="op">(</span><span class="va">USAccDeaths</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">deathagg</span>, series<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">deathagg</span>, series <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.tsaggregates-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>

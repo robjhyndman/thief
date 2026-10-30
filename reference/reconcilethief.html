@@ -39,9 +39,14 @@ and combines them using the temporal hierarchical approach of Athanasopoulos et 
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">reconcilethief</span><span class="op">(</span><span class="va">forecasts</span>, comb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"struc"</span>, <span class="st">"mse"</span>, <span class="st">"ols"</span>, <span class="st">"bu"</span>, <span class="st">"shr"</span>,</span>
-<span>  <span class="st">"sam"</span><span class="op">)</span>, mse <span class="op">=</span> <span class="cn">NULL</span>, residuals <span class="op">=</span> <span class="cn">NULL</span>, returnall <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  aggregatelist <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">reconcilethief</span><span class="op">(</span></span>
+<span>  <span class="va">forecasts</span>,</span>
+<span>  comb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"struc"</span>, <span class="st">"mse"</span>, <span class="st">"ols"</span>, <span class="st">"bu"</span>, <span class="st">"shr"</span>, <span class="st">"sam"</span><span class="op">)</span>,</span>
+<span>  mse <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  residuals <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  returnall <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  aggregatelist <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,26 +61,13 @@ where k is the same across all series.</p></dd>
 
 
 <dt id="arg-comb">comb<a class="anchor" aria-label="anchor" href="#arg-comb"></a></dt>
-<dd><p>Combination method of temporal hierarchies, taking one of the following values:</p><dl><dt>"struc"</dt>
-<dd><p>Structural scaling - weights from temporal hierarchy</p></dd>
-
-  <dt>"mse"</dt>
-<dd><p>Variance scaling - weights from in-sample MSE</p></dd>
-
-  <dt>"ols"</dt>
-<dd><p>Unscaled OLS combination weights</p></dd>
-
-  <dt>"bu"</dt>
-<dd><p>Bottom-up combination – i.e., all aggregate forecasts are ignored.</p></dd>
-
-  <dt>"shr"</dt>
-<dd><p>GLS using a shrinkage (to block diagonal) estimate of residuals</p></dd>
-
-  <dt>"sam"</dt>
-<dd><p>GLS using sample covariance matrix of residuals</p></dd>
-
-
-</dl></dd>
+<dd><p>Combination method of temporal hierarchies, taking one of the following values:</p><ul><li><p><code>"struc"</code>: Structural scaling - weights from temporal hierarchy</p></li>
+<li><p><code>"mse"</code>: Variance scaling - weights from in-sample MSE</p></li>
+<li><p><code>"ols"</code>: Unscaled OLS combination weights</p></li>
+<li><p><code>"bu"</code>: Bottom-up combination – i.e., all aggregate forecasts are ignored.</p></li>
+<li><p><code>"shr"</code>: GLS using a shrinkage (to block diagonal) estimate of residuals</p></li>
+<li><p><code>"sam"</code>: GLS using sample covariance matrix of residuals</p></li>
+</ul></dd>
 
 
 <dt id="arg-mse">mse<a class="anchor" aria-label="anchor" href="#arg-mse"></a></dt>
@@ -105,7 +97,7 @@ If <code>returnall==FALSE</code>, only the most disaggregated series is returned
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="thief.html">thief</a></code>, <code><a href="tsaggregates.html">tsaggregates</a></code></p></div>
+    <div class="dont-index"><p><code><a href="thief.html">thief()</a></code>, <code><a href="tsaggregates.html">tsaggregates()</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -119,18 +111,19 @@ If <code>returnall==FALSE</code>, only the most disaggregated series is returned
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compute forecasts</span></span></span>
 <span class="r-in"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">aggts</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">fc</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">forecast</span><span class="op">(</span><span class="fu">auto.arima</span><span class="op">(</span><span class="va">aggts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, h<span class="op">=</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">aggts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">aggts</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">fc</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">forecast</span><span class="op">(</span><span class="fu">auto.arima</span><span class="op">(</span><span class="va">aggts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, h <span class="op">=</span> <span class="fl">2</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">aggts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reconcile forecasts</span></span></span>
 <span class="r-in"><span><span class="va">reconciled</span> <span class="op">&lt;-</span> <span class="fu">reconcilethief</span><span class="op">(</span><span class="va">fc</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot forecasts before and after reconcilation</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">fc</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">fc</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">reconciled</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, main<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">aggts</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">fc</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">mean</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">reconciled</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">aggts</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">fc</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">mean</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-plt img"><img src="reconcilethief-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

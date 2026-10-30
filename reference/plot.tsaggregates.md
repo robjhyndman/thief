@@ -17,7 +17,7 @@ autoplot(object, series = "all", ...)
 - x:
 
   `tsaggregates` object, produced by
-  [`tsaggregates`](http://robjhyndman.github.io/thief/reference/tsaggregates.md).
+  [`tsaggregates()`](http://robjhyndman.github.io/thief/reference/tsaggregates.md).
 
 - series:
 
@@ -26,13 +26,13 @@ autoplot(object, series = "all", ...)
 - ...:
 
   Other arguments passed to
-  [`plot.ts`](https://rdrr.io/r/stats/plot.ts.html) or
-  [`autoplot.ts`](https://pkg.robjhyndman.com/forecast/reference/autoplot.ts.html).
+  [`stats::plot.ts()`](https://rdrr.io/r/stats/plot.ts.html) or
+  [`forecast::autoplot.ts()`](https://pkg.robjhyndman.com/forecast/reference/autoplot.ts.html).
 
 - object:
 
   `tsaggregates` object, produced by
-  [`tsaggregates`](http://robjhyndman.github.io/thief/reference/tsaggregates.md).
+  [`tsaggregates()`](http://robjhyndman.github.io/thief/reference/tsaggregates.md).
 
 ## Author
 
@@ -42,7 +42,7 @@ Rob J Hyndman
 
 ``` r
 deathagg <- tsaggregates(USAccDeaths)
-plot(deathagg, series=c(1,2,4,6))
+plot(deathagg, series = c(1, 2, 4, 6))
 
 
 library(ggplot2)

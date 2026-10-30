@@ -39,9 +39,16 @@ the temporal hierarchical approach of Athanasopoulos et al (2016).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">thief</span><span class="op">(</span><span class="va">y</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, h <span class="op">=</span> <span class="va">m</span> <span class="op">*</span> <span class="fl">2</span>, comb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"struc"</span>, <span class="st">"mse"</span>, <span class="st">"ols"</span>,</span>
-<span>  <span class="st">"bu"</span>, <span class="st">"shr"</span>, <span class="st">"sam"</span><span class="op">)</span>, usemodel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ets"</span>, <span class="st">"arima"</span>, <span class="st">"theta"</span>, <span class="st">"naive"</span>,</span>
-<span>  <span class="st">"snaive"</span><span class="op">)</span>, forecastfunction <span class="op">=</span> <span class="cn">NULL</span>, aggregatelist <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">thief</span><span class="op">(</span></span>
+<span>  <span class="va">y</span>,</span>
+<span>  m <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  h <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span>,</span>
+<span>  comb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"struc"</span>, <span class="st">"mse"</span>, <span class="st">"ols"</span>, <span class="st">"bu"</span>, <span class="st">"shr"</span>, <span class="st">"sam"</span><span class="op">)</span>,</span>
+<span>  usemodel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ets"</span>, <span class="st">"arima"</span>, <span class="st">"theta"</span>, <span class="st">"naive"</span>, <span class="st">"snaive"</span><span class="op">)</span>,</span>
+<span>  forecastfunction <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  aggregatelist <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -49,11 +56,11 @@ the temporal hierarchical approach of Athanasopoulos et al (2016).</p>
 
 
 <dl><dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Time series input</p></dd>
+<dd><p>Time series input. The seasonal period is <code>frequency(y)</code>.</p></dd>
 
 
 <dt id="arg-m">m<a class="anchor" aria-label="anchor" href="#arg-m"></a></dt>
-<dd><p>Seasonal period</p></dd>
+<dd><p>Deprecated. The seasonal period is always taken from <code>frequency(y)</code>.</p></dd>
 
 
 <dt id="arg-h">h<a class="anchor" aria-label="anchor" href="#arg-h"></a></dt>
@@ -61,46 +68,22 @@ the temporal hierarchical approach of Athanasopoulos et al (2016).</p>
 
 
 <dt id="arg-comb">comb<a class="anchor" aria-label="anchor" href="#arg-comb"></a></dt>
-<dd><p>Combination method of temporal hierarchies, taking one of the following values:</p><dl><dt>"struc"</dt>
-<dd><p>Structural scaling - weights from temporal hierarchy</p></dd>
-
-  <dt>"mse"</dt>
-<dd><p>Variance scaling - weights from in-sample MSE</p></dd>
-
-  <dt>"ols"</dt>
-<dd><p>Unscaled OLS combination weights</p></dd>
-
-  <dt>"bu"</dt>
-<dd><p>Bottom-up combination – i.e., all aggregate forecasts are ignored.</p></dd>
-
-  <dt>"shr"</dt>
-<dd><p>GLS using a shrinkage (to block diagonal) estimate of residuals</p></dd>
-
-  <dt>"sam"</dt>
-<dd><p>GLS using sample covariance matrix of residuals</p></dd>
-
-
-</dl></dd>
+<dd><p>Combination method of temporal hierarchies, taking one of the following values:</p><ul><li><p><code>"struc"</code>: Structural scaling - weights from temporal hierarchy</p></li>
+<li><p><code>"mse"</code>: Variance scaling - weights from in-sample MSE</p></li>
+<li><p><code>"ols"</code>: Unscaled OLS combination weights</p></li>
+<li><p><code>"bu"</code>: Bottom-up combination – i.e., all aggregate forecasts are ignored.</p></li>
+<li><p><code>"shr"</code>: GLS using a shrinkage (to block diagonal) estimate of residuals</p></li>
+<li><p><code>"sam"</code>: GLS using sample covariance matrix of residuals</p></li>
+</ul></dd>
 
 
 <dt id="arg-usemodel">usemodel<a class="anchor" aria-label="anchor" href="#arg-usemodel"></a></dt>
-<dd><p>Model used for forecasting each aggregation level:</p><dl><dt>"ets"</dt>
-<dd><p>exponential smoothing, using the <code><a href="https://pkg.robjhyndman.com/forecast/reference/ets.html" class="external-link">ets</a></code> function.</p></dd>
-
-  <dt>"arima"</dt>
-<dd><p>arima, using the <code><a href="https://pkg.robjhyndman.com/forecast/reference/auto.arima.html" class="external-link">auto.arima</a></code> function.</p></dd>
-
-  <dt>"theta"</dt>
-<dd><p>theta method, using the <code><a href="https://pkg.robjhyndman.com/forecast/reference/forecast.theta_model.html" class="external-link">thetaf</a></code> function.</p></dd>
-
-  <dt>"naive"</dt>
-<dd><p>random walk forecasts</p></dd>
-
-  <dt>"snaive"</dt>
-<dd><p>seasonal naive forecasts, based on the last year of observed data.</p></dd>
-
-
-</dl></dd>
+<dd><p>Model used for forecasting each aggregation level:</p><ul><li><p><code>"ets"</code>: exponential smoothing, using the <code><a href="https://pkg.robjhyndman.com/forecast/reference/ets.html" class="external-link">forecast::ets()</a></code> function.</p></li>
+<li><p><code>"arima"</code>: arima, using the <code><a href="https://pkg.robjhyndman.com/forecast/reference/auto.arima.html" class="external-link">forecast::auto.arima()</a></code> function.</p></li>
+<li><p><code>"theta"</code>: theta method, using the <code><a href="https://pkg.robjhyndman.com/forecast/reference/forecast.theta_model.html" class="external-link">forecast::thetaf()</a></code> function.</p></li>
+<li><p><code>"naive"</code>: random walk forecasts</p></li>
+<li><p><code>"snaive"</code>: seasonal naive forecasts, based on the last year of observed data.</p></li>
+</ul></dd>
 
 
 <dt id="arg-forecastfunction">forecastfunction<a class="anchor" aria-label="anchor" href="#arg-forecastfunction"></a></dt>
@@ -120,19 +103,20 @@ as the second argument. It must return an object of class <code>forecast</code>.
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>forecast object.</p>
+    <p>forecast object. It contains the reconciled point forecasts (<code>mean</code>),
+fitted values and residuals, but no prediction intervals.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function computes the temporal aggregates of <code>y</code> using
-<code><a href="tsaggregates.html">tsaggregates</a></code>, then calculates all forecasts using the model function
+<code><a href="tsaggregates.html">tsaggregates()</a></code>, then calculates all forecasts using the model function
 specified by <code>usemodel</code> or <code>forecastfunction</code>, and finally reconciles the
-forecasts using <code><a href="reconcilethief.html">reconcilethief</a></code>. The reconciled forecasts of <code>y</code>
+forecasts using <code><a href="reconcilethief.html">reconcilethief()</a></code>. The reconciled forecasts of <code>y</code>
 are returned.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="reconcilethief.html">reconcilethief</a></code></p></div>
+    <div class="dont-index"><p><code><a href="reconcilethief.html">reconcilethief()</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -144,12 +128,14 @@ are returned.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Select ARIMA models for all series using auto.arima()</span></span></span>
-<span class="r-in"><span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">thief</span><span class="op">(</span><span class="va">AEdemand</span><span class="op">[</span>,<span class="fl">12</span><span class="op">]</span>, usemodel<span class="op">=</span><span class="st">'arima'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">thief</span><span class="op">(</span><span class="va">AEdemand</span><span class="op">[</span>, <span class="fl">12</span><span class="op">]</span>, usemodel <span class="op">=</span> <span class="st">"arima"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use your own function</span></span></span>
-<span class="r-in"><span><span class="va">ftbats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">y</span>,<span class="va">h</span>,<span class="va">...</span><span class="op">)</span><span class="op">{</span><span class="fu">forecast</span><span class="op">(</span><span class="fu">tbats</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="va">h</span>,<span class="va">...</span><span class="op">)</span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">thief</span><span class="op">(</span><span class="va">AEdemand</span><span class="op">[</span>,<span class="fl">12</span><span class="op">]</span>, forecastfunction<span class="op">=</span><span class="va">ftbats</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ftbats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">y</span>, <span class="va">h</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu">forecast</span><span class="op">(</span><span class="fu">tbats</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, <span class="va">h</span>, <span class="va">...</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">thief</span><span class="op">(</span><span class="va">AEdemand</span><span class="op">[</span>, <span class="fl">12</span><span class="op">]</span>, forecastfunction <span class="op">=</span> <span class="va">ftbats</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

@@ -33,8 +33,8 @@ You can install the **development** version from
 
 ``` r
 
-# install.packages("devtools")
-devtools::install_github("robjhyndman/thief")
+# install.packages("pak")
+pak::pak("robjhyndman/thief")
 ```
 
 ## Usage

@@ -7,9 +7,14 @@ et al (2016).
 ## Usage
 
 ``` r
-reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr",
-  "sam"), mse = NULL, residuals = NULL, returnall = TRUE,
-  aggregatelist = NULL)
+reconcilethief(
+  forecasts,
+  comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
+  mse = NULL,
+  residuals = NULL,
+  returnall = TRUE,
+  aggregatelist = NULL
+)
 ```
 
 ## Arguments
@@ -26,29 +31,19 @@ reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr",
   Combination method of temporal hierarchies, taking one of the
   following values:
 
-  "struc"
+  - `"struc"`: Structural scaling - weights from temporal hierarchy
 
-  :   Structural scaling - weights from temporal hierarchy
+  - `"mse"`: Variance scaling - weights from in-sample MSE
 
-  "mse"
+  - `"ols"`: Unscaled OLS combination weights
 
-  :   Variance scaling - weights from in-sample MSE
+  - `"bu"`: Bottom-up combination – i.e., all aggregate forecasts are
+    ignored.
 
-  "ols"
+  - `"shr"`: GLS using a shrinkage (to block diagonal) estimate of
+    residuals
 
-  :   Unscaled OLS combination weights
-
-  "bu"
-
-  :   Bottom-up combination – i.e., all aggregate forecasts are ignored.
-
-  "shr"
-
-  :   GLS using a shrinkage (to block diagonal) estimate of residuals
-
-  "sam"
-
-  :   GLS using sample covariance matrix of residuals
+  - `"sam"`: GLS using sample covariance matrix of residuals
 
 - mse:
 
@@ -80,8 +75,8 @@ List of reconciled forecasts in the same format as `forecast`. If
 
 ## See also
 
-[`thief`](http://robjhyndman.github.io/thief/reference/thief.md),
-[`tsaggregates`](http://robjhyndman.github.io/thief/reference/tsaggregates.md)
+[`thief()`](http://robjhyndman.github.io/thief/reference/thief.md),
+[`tsaggregates()`](http://robjhyndman.github.io/thief/reference/tsaggregates.md)
 
 ## Author
 
@@ -95,18 +90,19 @@ aggts <- tsaggregates(USAccDeaths)
 
 # Compute forecasts
 fc <- list()
-for(i in seq_along(aggts))
-  fc[[i]] <- forecast(auto.arima(aggts[[i]]), h=2*frequency(aggts[[i]]))
+for (i in seq_along(aggts)) {
+  fc[[i]] <- forecast(auto.arima(aggts[[i]]), h = 2 * frequency(aggts[[i]]))
+}
 
 # Reconcile forecasts
 reconciled <- reconcilethief(fc)
 
 # Plot forecasts before and after reconcilation
-par(mfrow=c(2,3))
-for(i in seq_along(fc))
+par(mfrow = c(2, 3))
+for (i in seq_along(fc))
 {
-  plot(reconciled[[i]], main=names(aggts)[i])
-  lines(fc[[i]]$mean, col='red')
+  plot(reconciled[[i]], main = names(aggts)[i])
+  lines(fc[[i]]$mean, col = "red")
 }
 
 ```

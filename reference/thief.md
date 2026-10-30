@@ -6,20 +6,27 @@ hierarchical approach of Athanasopoulos et al (2016).
 ## Usage
 
 ``` r
-thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
-  "bu", "shr", "sam"), usemodel = c("ets", "arima", "theta", "naive",
-  "snaive"), forecastfunction = NULL, aggregatelist = NULL, ...)
+thief(
+  y,
+  m = NULL,
+  h = frequency(y) * 2,
+  comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
+  usemodel = c("ets", "arima", "theta", "naive", "snaive"),
+  forecastfunction = NULL,
+  aggregatelist = NULL,
+  ...
+)
 ```
 
 ## Arguments
 
 - y:
 
-  Time series input
+  Time series input. The seasonal period is `frequency(y)`.
 
 - m:
 
-  Seasonal period
+  Deprecated. The seasonal period is always taken from `frequency(y)`.
 
 - h:
 
@@ -30,59 +37,40 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   Combination method of temporal hierarchies, taking one of the
   following values:
 
-  "struc"
+  - `"struc"`: Structural scaling - weights from temporal hierarchy
 
-  :   Structural scaling - weights from temporal hierarchy
+  - `"mse"`: Variance scaling - weights from in-sample MSE
 
-  "mse"
+  - `"ols"`: Unscaled OLS combination weights
 
-  :   Variance scaling - weights from in-sample MSE
+  - `"bu"`: Bottom-up combination – i.e., all aggregate forecasts are
+    ignored.
 
-  "ols"
+  - `"shr"`: GLS using a shrinkage (to block diagonal) estimate of
+    residuals
 
-  :   Unscaled OLS combination weights
-
-  "bu"
-
-  :   Bottom-up combination – i.e., all aggregate forecasts are ignored.
-
-  "shr"
-
-  :   GLS using a shrinkage (to block diagonal) estimate of residuals
-
-  "sam"
-
-  :   GLS using sample covariance matrix of residuals
+  - `"sam"`: GLS using sample covariance matrix of residuals
 
 - usemodel:
 
   Model used for forecasting each aggregation level:
 
-  "ets"
+  - `"ets"`: exponential smoothing, using the
+    [`forecast::ets()`](https://pkg.robjhyndman.com/forecast/reference/ets.html)
+    function.
 
-  :   exponential smoothing, using the
-      [`ets`](https://pkg.robjhyndman.com/forecast/reference/ets.html)
-      function.
+  - `"arima"`: arima, using the
+    [`forecast::auto.arima()`](https://pkg.robjhyndman.com/forecast/reference/auto.arima.html)
+    function.
 
-  "arima"
+  - `"theta"`: theta method, using the
+    [`forecast::thetaf()`](https://pkg.robjhyndman.com/forecast/reference/forecast.theta_model.html)
+    function.
 
-  :   arima, using the
-      [`auto.arima`](https://pkg.robjhyndman.com/forecast/reference/auto.arima.html)
-      function.
+  - `"naive"`: random walk forecasts
 
-  "theta"
-
-  :   theta method, using the
-      [`thetaf`](https://pkg.robjhyndman.com/forecast/reference/forecast.theta_model.html)
-      function.
-
-  "naive"
-
-  :   random walk forecasts
-
-  "snaive"
-
-  :   seasonal naive forecasts, based on the last year of observed data.
+  - `"snaive"`: seasonal naive forecasts, based on the last year of
+    observed data.
 
 - forecastfunction:
 
@@ -102,21 +90,22 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
 
 ## Value
 
-forecast object.
+forecast object. It contains the reconciled point forecasts (`mean`),
+fitted values and residuals, but no prediction intervals.
 
 ## Details
 
 This function computes the temporal aggregates of `y` using
-[`tsaggregates`](http://robjhyndman.github.io/thief/reference/tsaggregates.md),
+[`tsaggregates()`](http://robjhyndman.github.io/thief/reference/tsaggregates.md),
 then calculates all forecasts using the model function specified by
 `usemodel` or `forecastfunction`, and finally reconciles the forecasts
 using
-[`reconcilethief`](http://robjhyndman.github.io/thief/reference/reconcilethief.md).
+[`reconcilethief()`](http://robjhyndman.github.io/thief/reference/reconcilethief.md).
 The reconciled forecasts of `y` are returned.
 
 ## See also
 
-[`reconcilethief`](http://robjhyndman.github.io/thief/reference/reconcilethief.md)
+[`reconcilethief()`](http://robjhyndman.github.io/thief/reference/reconcilethief.md)
 
 ## Author
 
@@ -128,12 +117,14 @@ Rob J Hyndman and Nikolaos Kourentzes
 if (FALSE) { # \dontrun{
 
 # Select ARIMA models for all series using auto.arima()
-z <- thief(AEdemand[,12], usemodel='arima')
+z <- thief(AEdemand[, 12], usemodel = "arima")
 plot(z)
 
 # Use your own function
-ftbats <- function(y,h,...){forecast(tbats(y),h,...)}
-z <- thief(AEdemand[,12], forecastfunction=ftbats)
+ftbats <- function(y, h, ...) {
+  forecast(tbats(y), h, ...)
+}
+z <- thief(AEdemand[, 12], forecastfunction = ftbats)
 plot(z)
 } # }
 ```

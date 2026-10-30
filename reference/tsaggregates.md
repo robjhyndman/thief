@@ -5,8 +5,12 @@ Produces all temporal aggregations for frequencies greater than 1
 ## Usage
 
 ``` r
-tsaggregates(y, m = frequency(y), align = c("end", "start"),
-  aggregatelist = NULL)
+tsaggregates(
+  y,
+  m = frequency(y),
+  align = c("end", "start"),
+  aggregatelist = NULL
+)
 ```
 
 ## Arguments
@@ -31,13 +35,13 @@ tsaggregates(y, m = frequency(y), align = c("end", "start"),
 
 ## Value
 
-A list of time series. The first element is the series \`y\`, followed
-by series with increasing levels of aggregation. The last element is the
+A list of time series. The first element is the series `y`, followed by
+series with increasing levels of aggregation. The last element is the
 "annual" series (i.e., the series aggregated over all seasons).
 
 ## See also
 
-[`plot.tsaggregates`](http://robjhyndman.github.io/thief/reference/plot.tsaggregates.md)
+[`plot.tsaggregates()`](http://robjhyndman.github.io/thief/reference/plot.tsaggregates.md)
 
 ## Author
 

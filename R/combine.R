@@ -147,7 +147,10 @@ reconcilethief <- function(forecasts,
       rmat <- matrix(0, nrow=0, ncol=nc)
       for(i in rev(seq_along(forecasts)))
         rmat <- rbind(rmat, matrix(residuals[[i]], ncol=nc))
-      bts <- hts::MinT(t(fmat), groups=grps, residual=t(rmat),
+      # Drop periods with missing residuals (e.g., first obs of naive fits)
+      rmat <- t(rmat)
+      rmat <- rmat[stats::complete.cases(rmat), , drop=FALSE]
+      bts <- hts::MinT(t(fmat), groups=grps, residual=rmat,
         covariance=comb, keep='bottom')
     }
     # Turn resulting reconciled forecasts back into a ts object

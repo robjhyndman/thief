@@ -32,10 +32,13 @@ test_that("thief works with each model and combination", {
 test_that("thief works with GLS combinations given enough data", {
   set.seed(1)
   y <- ts(rnorm(240, 100), frequency = 12)
-  for (comb in c("shr", "sam")) {
-    z <- suppressWarnings(thief(y, h = 6, comb = comb))
-    expect_length(z$mean, 6)
-    expect_false(anyNA(z$mean))
+  # naive and snaive residuals contain NAs at the start
+  for (model in c("ets", "naive", "snaive")) {
+    for (comb in c("shr", "sam")) {
+      z <- suppressWarnings(thief(y, h = 6, comb = comb, usemodel = model))
+      expect_length(z$mean, 6)
+      expect_false(anyNA(z$mean))
+    }
   }
 })
 

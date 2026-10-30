@@ -4,9 +4,14 @@
 \alias{reconcilethief}
 \title{Reconcile temporal hierarchical forecasts}
 \usage{
-reconcilethief(forecasts, comb = c("struc", "mse", "ols", "bu", "shr",
-  "sam"), mse = NULL, residuals = NULL, returnall = TRUE,
-  aggregatelist = NULL)
+reconcilethief(
+  forecasts,
+  comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
+  mse = NULL,
+  residuals = NULL,
+  returnall = TRUE,
+  aggregatelist = NULL
+)
 }
 \arguments{
 \item{forecasts}{List of forecasts. Each element must be a time series of forecasts,
@@ -15,13 +20,13 @@ The number of forecasts should be equal to k times the seasonal period for each 
 where k is the same across all series.}
 
 \item{comb}{Combination method of temporal hierarchies, taking one of the following values:
-\describe{
-  \item{"struc"}{Structural scaling - weights from temporal hierarchy}
-  \item{"mse"}{Variance scaling - weights from in-sample MSE}
-  \item{"ols"}{Unscaled OLS combination weights}
-  \item{"bu"}{Bottom-up combination -- i.e., all aggregate forecasts are ignored.}
-  \item{"shr"}{GLS using a shrinkage (to block diagonal) estimate of residuals}
-  \item{"sam"}{GLS using sample covariance matrix of residuals}
+\itemize{
+\item \code{"struc"}: Structural scaling - weights from temporal hierarchy
+\item \code{"mse"}: Variance scaling - weights from in-sample MSE
+\item \code{"ols"}: Unscaled OLS combination weights
+\item \code{"bu"}: Bottom-up combination -- i.e., all aggregate forecasts are ignored.
+\item \code{"shr"}: GLS using a shrinkage (to block diagonal) estimate of residuals
+\item \code{"sam"}: GLS using sample covariance matrix of residuals
 }}
 
 \item{mse}{A vector of one-step MSE values corresponding to each of the forecast series.}
@@ -66,7 +71,7 @@ for(i in seq_along(fc))
 
 }
 \seealso{
-\code{\link{thief}}, \code{\link{tsaggregates}}
+\code{\link[=thief]{thief()}}, \code{\link[=tsaggregates]{tsaggregates()}}
 }
 \author{
 Rob J Hyndman

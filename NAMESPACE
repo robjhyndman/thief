@@ -8,11 +8,13 @@ export(tsaggregates)
 import(forecast)
 importFrom(ggplot2,autoplot)
 importFrom(graphics,plot)
-importFrom(stats,"tsp<-")
-importFrom(stats,approx)
-importFrom(stats,frequency)
-importFrom(stats,is.ts)
-importFrom(stats,plot.ts)
-importFrom(stats,time)
-importFrom(stats,ts)
-importFrom(stats,tsp)
+importFrom(stats,
+  "tsp<-",
+  approx,
+  frequency,
+  is.ts,
+  plot.ts,
+  time,
+  ts,
+  tsp
+)

@@ -2,17 +2,17 @@
 #'
 #' Produces all temporal aggregations for frequencies greater than 1
 #'
-#' @param y Univariate time series of class \code{ts}.
+#' @param y Univariate time series of class `ts`.
 #' @param m Integer seasonal period
 #' @param align Indicates how the aggregates are to be aligned:
-#' either with the \code{start} of the series or the \code{end} of the series.
-#' For forecasting purposes, it should be set to \code{end}.
+#' either with the `start` of the series or the `end` of the series.
+#' For forecasting purposes, it should be set to `end`.
 #' @param aggregatelist User-selected list of aggregates to consider.
 #'
-#' @return A list of time series. The first element is the series \code{y},
+#' @return A list of time series. The first element is the series `y`,
 #' followed by series with increasing levels of aggregation. The last
 #' element is the "annual" series (i.e., the series aggregated over all seasons).
-#' @seealso \code{\link{plot.tsaggregates}}
+#' @seealso [plot.tsaggregates()]
 #'
 #' @examples
 #' tsaggregates(USAccDeaths)

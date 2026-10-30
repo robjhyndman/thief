@@ -8,27 +8,27 @@
 #' The number of forecasts should be equal to k times the seasonal period for each series,
 #' where k is the same across all series.
 #' @param comb Combination method of temporal hierarchies, taking one of the following values:
-#' \describe{
-#'   \item{"struc"}{Structural scaling - weights from temporal hierarchy}
-#'   \item{"mse"}{Variance scaling - weights from in-sample MSE}
-#'   \item{"ols"}{Unscaled OLS combination weights}
-#'   \item{"bu"}{Bottom-up combination -- i.e., all aggregate forecasts are ignored.}
-#'   \item{"shr"}{GLS using a shrinkage (to block diagonal) estimate of residuals}
-#'   \item{"sam"}{GLS using sample covariance matrix of residuals}
-#' }
+#'
+#' * `"struc"`: Structural scaling - weights from temporal hierarchy
+#' * `"mse"`: Variance scaling - weights from in-sample MSE
+#' * `"ols"`: Unscaled OLS combination weights
+#' * `"bu"`: Bottom-up combination -- i.e., all aggregate forecasts are ignored.
+#' * `"shr"`: GLS using a shrinkage (to block diagonal) estimate of residuals
+#' * `"sam"`: GLS using sample covariance matrix of residuals
+#'
 #' @param mse A vector of one-step MSE values corresponding to each of the forecast series.
 #' @param residuals List of residuals corresponding to each of the forecast models.
-#' Each element must be a time series of residuals. If \code{forecast} contains a list of
+#' Each element must be a time series of residuals. If `forecast` contains a list of
 #' forecast objects, then the residuals will be extracted automatically and this argument
-#' is not needed. However, it will be used if not \code{NULL}.
-#' @param returnall If \code{TRUE}, a list of time series corresponding to the first argument
+#' is not needed. However, it will be used if not `NULL`.
+#' @param returnall If `TRUE`, a list of time series corresponding to the first argument
 #' is returned, but now reconciled. Otherwise, only the most disaggregated series is returned.
 #' @param aggregatelist (optional) User-selected list of forecast aggregates to consider
 #'
 #' @return
-#'   List of reconciled forecasts in the same format as \code{forecast}.
-#' If \code{returnall==FALSE}, only the most disaggregated series is returned.
-#' @seealso \code{\link{thief}}, \code{\link{tsaggregates}}
+#'   List of reconciled forecasts in the same format as `forecast`.
+#' If `returnall==FALSE`, only the most disaggregated series is returned.
+#' @seealso [thief()], [tsaggregates()]
 #'
 #' @examples
 #' # Construct aggregates

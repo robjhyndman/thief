@@ -2,11 +2,11 @@
 #'
 #' Plots all temporal aggregations of a time series
 #'
-#' @param x \code{tsaggregates} object, produced by \code{\link{tsaggregates}}.
-#' @param object \code{tsaggregates} object, produced by \code{\link{tsaggregates}}.
+#' @param x `tsaggregates` object, produced by [tsaggregates()].
+#' @param object `tsaggregates` object, produced by [tsaggregates()].
 #' @param series The indexes of the series to plot. By default, all series are plotted.
-#' @param ... Other arguments passed to \code{\link[stats]{plot.ts}}
-#' or \code{\link[forecast]{autoplot.ts}}.
+#' @param ... Other arguments passed to [stats::plot.ts()]
+#' or [forecast::autoplot.ts()].
 #'
 #' @method plot tsaggregates
 #'

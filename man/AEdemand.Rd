@@ -4,12 +4,14 @@
 \name{AEdemand}
 \alias{AEdemand}
 \title{Accident and Emergency demand in the UK}
-\format{An object of class \code{ts}.}
+\format{
+An object of class \code{ts}.
+}
 \usage{
 AEdemand
 }
 \description{
-Weekly demand of Accident & Emergency departments in the UK, 
+Weekly demand of Accident & Emergency departments in the UK,
 from 7 November 2010 to 7 June 2015.
 }
 \examples{

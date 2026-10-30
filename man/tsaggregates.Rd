@@ -4,8 +4,12 @@
 \alias{tsaggregates}
 \title{Non-overlapping temporal aggregation of a time series}
 \usage{
-tsaggregates(y, m = frequency(y), align = c("end", "start"),
-  aggregatelist = NULL)
+tsaggregates(
+  y,
+  m = frequency(y),
+  align = c("end", "start"),
+  aggregatelist = NULL
+)
 }
 \arguments{
 \item{y}{Univariate time series of class \code{ts}.}
@@ -31,7 +35,7 @@ tsaggregates(USAccDeaths)
 
 }
 \seealso{
-\code{\link{plot.tsaggregates}}
+\code{\link[=plot.tsaggregates]{plot.tsaggregates()}}
 }
 \author{
 Rob J Hyndman

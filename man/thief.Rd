@@ -4,9 +4,16 @@
 \alias{thief}
 \title{Temporal hierarchical forecasting}
 \usage{
-thief(y, m = NULL, h = frequency(y) * 2, comb = c("struc", "mse", "ols",
-  "bu", "shr", "sam"), usemodel = c("ets", "arima", "theta", "naive",
-  "snaive"), forecastfunction = NULL, aggregatelist = NULL, ...)
+thief(
+  y,
+  m = NULL,
+  h = frequency(y) * 2,
+  comb = c("struc", "mse", "ols", "bu", "shr", "sam"),
+  usemodel = c("ets", "arima", "theta", "naive", "snaive"),
+  forecastfunction = NULL,
+  aggregatelist = NULL,
+  ...
+)
 }
 \arguments{
 \item{y}{Time series input. The seasonal period is \code{frequency(y)}.}
@@ -16,22 +23,22 @@ thief(y, m = NULL, h = frequency(y) * 2, comb = c("struc", "mse", "ols",
 \item{h}{Forecast horizon}
 
 \item{comb}{Combination method of temporal hierarchies, taking one of the following values:
-\describe{
-  \item{"struc"}{Structural scaling - weights from temporal hierarchy}
-  \item{"mse"}{Variance scaling - weights from in-sample MSE}
-  \item{"ols"}{Unscaled OLS combination weights}
-  \item{"bu"}{Bottom-up combination -- i.e., all aggregate forecasts are ignored.}
-  \item{"shr"}{GLS using a shrinkage (to block diagonal) estimate of residuals}
-  \item{"sam"}{GLS using sample covariance matrix of residuals}
+\itemize{
+\item \code{"struc"}: Structural scaling - weights from temporal hierarchy
+\item \code{"mse"}: Variance scaling - weights from in-sample MSE
+\item \code{"ols"}: Unscaled OLS combination weights
+\item \code{"bu"}: Bottom-up combination -- i.e., all aggregate forecasts are ignored.
+\item \code{"shr"}: GLS using a shrinkage (to block diagonal) estimate of residuals
+\item \code{"sam"}: GLS using sample covariance matrix of residuals
 }}
 
 \item{usemodel}{Model used for forecasting each aggregation level:
-\describe{
-  \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
-  \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
-  \item{"theta"}{theta method, using the \code{\link[forecast]{thetaf}} function.}
-  \item{"naive"}{random walk forecasts}
-  \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
+\itemize{
+\item \code{"ets"}: exponential smoothing, using the \code{\link[forecast:ets]{forecast::ets()}} function.
+\item \code{"arima"}: arima, using the \code{\link[forecast:auto.arima]{forecast::auto.arima()}} function.
+\item \code{"theta"}: theta method, using the \code{\link[forecast:thetaf]{forecast::thetaf()}} function.
+\item \code{"naive"}: random walk forecasts
+\item \code{"snaive"}: seasonal naive forecasts, based on the last year of observed data.
 }}
 
 \item{forecastfunction}{User-defined function to be used instead of \code{usemodel}. The
@@ -53,9 +60,9 @@ the temporal hierarchical approach of Athanasopoulos et al (2016).
 }
 \details{
 This function computes the temporal aggregates of \code{y} using
-\code{\link{tsaggregates}}, then calculates all forecasts using the model function
+\code{\link[=tsaggregates]{tsaggregates()}}, then calculates all forecasts using the model function
 specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the
-forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y}
+forecasts using \code{\link[=reconcilethief]{reconcilethief()}}. The reconciled forecasts of \code{y}
 are returned.
 }
 \examples{
@@ -73,7 +80,7 @@ plot(z)
 
 }
 \seealso{
-\code{\link{reconcilethief}}
+\code{\link[=reconcilethief]{reconcilethief()}}
 }
 \author{
 Rob J Hyndman and Nikolaos Kourentzes

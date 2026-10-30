@@ -10,14 +10,14 @@
 \method{autoplot}{tsaggregates}(object, series = "all", ...)
 }
 \arguments{
-\item{x}{\code{tsaggregates} object, produced by \code{\link{tsaggregates}}.}
+\item{x}{\code{tsaggregates} object, produced by \code{\link[=tsaggregates]{tsaggregates()}}.}
 
 \item{series}{The indexes of the series to plot. By default, all series are plotted.}
 
-\item{...}{Other arguments passed to \code{\link[stats]{plot.ts}}
-or \code{\link[forecast]{autoplot.ts}}.}
+\item{...}{Other arguments passed to \code{\link[stats:plot.ts]{stats::plot.ts()}}
+or \code{\link[forecast:autoplot.ts]{forecast::autoplot.ts()}}.}
 
-\item{object}{\code{tsaggregates} object, produced by \code{\link{tsaggregates}}.}
+\item{object}{\code{tsaggregates} object, produced by \code{\link[=tsaggregates]{tsaggregates()}}.}
 }
 \description{
 Plots all temporal aggregations of a time series

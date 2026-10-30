@@ -7,7 +7,7 @@
 #'
 #' @usage AEdemand
 #'
-#' @format An object of class \code{ts}.
+#' @format An object of class `ts`.
 #'
 #' @keywords datasets
 #'

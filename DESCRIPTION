@@ -22,4 +22,6 @@ Authors@R: c(
 BugReports: https://github.com/robjhyndman/thief/issues
 License: GPL-3
 URL: http://pkg.robjhyndman.com/thief, https://github.com/robjhyndman/thief,
-RoxygenNote: 6.1.1
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.1

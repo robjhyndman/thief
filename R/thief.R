@@ -3,44 +3,44 @@
 #' Takes a time series as input and produces forecasts using
 #' the temporal hierarchical approach of Athanasopoulos et al (2016).
 #'
-#' @param y        Time series input. The seasonal period is \code{frequency(y)}.
-#' @param m        Deprecated. The seasonal period is always taken from \code{frequency(y)}.
+#' @param y        Time series input. The seasonal period is `frequency(y)`.
+#' @param m        Deprecated. The seasonal period is always taken from `frequency(y)`.
 #' @param h        Forecast horizon
 #' @param comb     Combination method of temporal hierarchies, taking one of the following values:
-#' \describe{
-#'   \item{"struc"}{Structural scaling - weights from temporal hierarchy}
-#'   \item{"mse"}{Variance scaling - weights from in-sample MSE}
-#'   \item{"ols"}{Unscaled OLS combination weights}
-#'   \item{"bu"}{Bottom-up combination -- i.e., all aggregate forecasts are ignored.}
-#'   \item{"shr"}{GLS using a shrinkage (to block diagonal) estimate of residuals}
-#'   \item{"sam"}{GLS using sample covariance matrix of residuals}
-#' }
+#'
+#' * `"struc"`: Structural scaling - weights from temporal hierarchy
+#' * `"mse"`: Variance scaling - weights from in-sample MSE
+#' * `"ols"`: Unscaled OLS combination weights
+#' * `"bu"`: Bottom-up combination -- i.e., all aggregate forecasts are ignored.
+#' * `"shr"`: GLS using a shrinkage (to block diagonal) estimate of residuals
+#' * `"sam"`: GLS using sample covariance matrix of residuals
+#'
 #' @param usemodel    Model used for forecasting each aggregation level:
-#' \describe{
-#'   \item{"ets"}{exponential smoothing, using the \code{\link[forecast]{ets}} function.}
-#'   \item{"arima"}{arima, using the \code{\link[forecast]{auto.arima}} function.}
-#'   \item{"theta"}{theta method, using the \code{\link[forecast]{thetaf}} function.}
-#'   \item{"naive"}{random walk forecasts}
-#'   \item{"snaive"}{seasonal naive forecasts, based on the last year of observed data.}
-#' }
-#' @param forecastfunction User-defined function to be used instead of \code{usemodel}. The
+#'
+#' * `"ets"`: exponential smoothing, using the [forecast::ets()] function.
+#' * `"arima"`: arima, using the [forecast::auto.arima()] function.
+#' * `"theta"`: theta method, using the [forecast::thetaf()] function.
+#' * `"naive"`: random walk forecasts
+#' * `"snaive"`: seasonal naive forecasts, based on the last year of observed data.
+#'
+#' @param forecastfunction User-defined function to be used instead of `usemodel`. The
 #' function must take a time series as the first argument, and the forecast horizon
-#' as the second argument. It must return an object of class \code{forecast}.
+#' as the second argument. It must return an object of class `forecast`.
 #' @param aggregatelist User-selected list of forecast aggregates to consider
 #' @param ...   Arguments to be passed to the time series modelling function
-#' (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.
+#' (such as `ets` or `auto.arima`), or to `forecastfunction`.
 #'
-#' @details This function computes the temporal aggregates of \code{y} using
-#' \code{\link{tsaggregates}}, then calculates all forecasts using the model function
-#' specified by \code{usemodel} or \code{forecastfunction}, and finally reconciles the
-#' forecasts using \code{\link{reconcilethief}}. The reconciled forecasts of \code{y}
+#' @details This function computes the temporal aggregates of `y` using
+#' [tsaggregates()], then calculates all forecasts using the model function
+#' specified by `usemodel` or `forecastfunction`, and finally reconciles the
+#' forecasts using [reconcilethief()]. The reconciled forecasts of `y`
 #' are returned.
 #'
 #' @return
-#'   forecast object. It contains the reconciled point forecasts (\code{mean}),
+#'   forecast object. It contains the reconciled point forecasts (`mean`),
 #'   fitted values and residuals, but no prediction intervals.
 #'
-#' @seealso \code{\link{reconcilethief}}
+#' @seealso [reconcilethief()]
 #'
 #' @examples
 #' \dontrun{

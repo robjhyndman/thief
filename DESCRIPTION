@@ -7,7 +7,10 @@ Depends:
     R (>= 3.0.2),
     forecast (>= 7.2)
 Imports:
-    hts, ggplot2
+    hts,
+    ggplot2,
+    stats,
+    utils
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

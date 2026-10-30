@@ -9,7 +9,7 @@
 #' For forecasting purposes, it should be set to \code{end}.
 #' @param aggregatelist User-selected list of aggregates to consider.
 #'
-#' @return A list of time series. The first element is the series `y`,
+#' @return A list of time series. The first element is the series \code{y},
 #' followed by series with increasing levels of aggregation. The last
 #' element is the "annual" series (i.e., the series aggregated over all seasons).
 #' @seealso \code{\link{plot.tsaggregates}}

@@ -37,7 +37,10 @@ test_that("tsaggregates works with a non-ts input and explicit m", {
 
 test_that("tsaggregates errors on bad input", {
   expect_error(tsaggregates(USAccDeaths, aggregatelist = 5), "No valid factors")
-  expect_error(tsaggregates(1:5, m = 0), "too short")
+  expect_error(tsaggregates(1:5, m = 0), "positive whole number")
+  expect_error(tsaggregates(ts(1:800, frequency = 365.25)), "positive whole number")
+  expect_error(tsaggregates(1:5, m = 12), NA)
+  expect_error(tsaggregates(1:5, m = c(4, 12)), "positive whole number")
 })
 
 test_that("tsaggregates aggregates the first series when aggregatelist omits 1", {

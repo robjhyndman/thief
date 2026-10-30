@@ -26,7 +26,9 @@ tsaggregates <- function (y, m=frequency(y), align=c("end","start"),
 {
   align <- match.arg(align)
   n <- length(y)
-  m <- as.integer(m)
+  if(!is.numeric(m) || length(m) != 1L || is.na(m) || m < 1 || abs(m - round(m)) > 1e-8)
+    stop("m must be a positive whole number")
+  m <- as.integer(round(m))
 
   # Find all factors of m
   mout <- seq_len(m)

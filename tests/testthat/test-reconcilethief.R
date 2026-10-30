@@ -16,3 +16,64 @@ test_that("reconcilethief handles length-1 series with rounding differences in s
   adj <- as.numeric(annual$mean) - as.numeric(fc[[6]]$mean)
   expect_equal(as.numeric(annual$lower), as.numeric(fc[[6]]$lower) + adj)
 })
+
+make_fc <- function(y = USAccDeaths, h = 12) {
+  lapply(tsaggregates(y), function(x) {
+    forecast::forecast(forecast::ets(x), h = h / (12 / frequency(x)))
+  })
+}
+
+test_that("reconcilethief makes forecasts coherent across all combinations", {
+  fc <- make_fc()
+  for (comb in c("struc", "mse", "ols")) {
+    mse <- vapply(fc, function(f) mean(residuals(f)^2), numeric(1))
+    rec <- reconcilethief(fc, comb = comb, mse = mse)
+    expect_length(rec, length(fc))
+    expect_s3_class(rec[[1]], "forecast")
+    # Aggregates equal the sums of the reconciled bottom level
+    expect_equal(as.numeric(rec[[length(rec)]]$mean), sum(rec[[1]]$mean))
+    expect_equal(sum(rec[[3]]$mean), sum(rec[[1]]$mean))
+  }
+})
+
+test_that("reconcilethief GLS combinations give coherent forecasts", {
+  set.seed(1)
+  fc <- make_fc(ts(rnorm(240, 100), frequency = 12))
+  for (comb in c("shr", "sam")) {
+    rec <- suppressWarnings(reconcilethief(fc, comb = comb))
+    expect_equal(sum(rec[[3]]$mean), sum(rec[[1]]$mean))
+  }
+})
+
+test_that("reconcilethief bottom-up keeps the bottom forecasts", {
+  fc <- make_fc()
+  rec <- reconcilethief(fc, comb = "bu")
+  expect_equal(as.numeric(rec[[1]]$mean), as.numeric(fc[[1]]$mean))
+})
+
+test_that("reconcilethief returnall = FALSE returns only the bottom level", {
+  fc <- make_fc()
+  rec <- reconcilethief(fc, returnall = FALSE)
+  expect_s3_class(rec, "forecast")
+  expect_length(rec$mean, 12)
+})
+
+test_that("reconcilethief accepts plain ts lists", {
+  fc <- lapply(make_fc(), function(f) f$mean)
+  rec <- reconcilethief(fc, comb = "ols")
+  expect_s3_class(rec, "tsaggregates")
+  expect_equal(sum(rec[[length(rec)]]), sum(rec[[1]]))
+  bts <- reconcilethief(fc, comb = "ols", returnall = FALSE)
+  expect_s3_class(bts, "ts")
+  expect_length(bts, 12)
+})
+
+test_that("reconcilethief validates input", {
+  fc <- lapply(make_fc(), function(f) f$mean)
+  expect_error(reconcilethief(fc[-length(fc)]), "Minimum seasonal period")
+  bad <- fc
+  bad[[1]] <- bad[[1]][1:6]
+  expect_error(reconcilethief(bad), "same equivalent lengths")
+  expect_error(reconcilethief(fc, comb = "shr"), "GLS needs residuals")
+  expect_error(reconcilethief(fc, comb = "foo"), "should be one of")
+})

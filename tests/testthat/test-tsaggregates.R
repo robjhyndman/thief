@@ -39,3 +39,18 @@ test_that("tsaggregates errors on bad input", {
   expect_error(tsaggregates(USAccDeaths, aggregatelist = 5), "No valid factors")
   expect_error(tsaggregates(1:5, m = 0), "too short")
 })
+
+test_that("tsaggregates aggregates the first series when aggregatelist omits 1", {
+  agg <- tsaggregates(USAccDeaths, aggregatelist = c(3, 12))
+  expect_named(agg, c("Quarterly", "Annual"))
+  expect_equal(frequency(agg$Quarterly), 4)
+  expect_length(agg$Quarterly, 24)
+  expect_equal(sum(agg$Quarterly), sum(USAccDeaths))
+  expect_equal(frequency(agg$Annual), 1)
+})
+
+test_that("tsaggregates with only the original period returns the series", {
+  agg <- tsaggregates(USAccDeaths, aggregatelist = 1)
+  expect_length(agg, 1)
+  expect_equal(agg[[1]], USAccDeaths)
+})

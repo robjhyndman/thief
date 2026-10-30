@@ -43,10 +43,13 @@ tsaggregates <- function (y, m=frequency(y), align=c("end","start"),
 
   k <- length(mout)
   y.out <- vector("list",k)
-  y.out[[1L]] <- y
+  # The original series is only an aggregate if period 1 is included
+  first <- if(mout[1L] == 1L) 2L else 1L
+  if(first == 2L)
+    y.out[[1L]] <- y
   if(!is.ts(y))
     y <- ts(y, frequency=m)
-  for(i in seq_len(k)[-1L])
+  for(i in seq_len(k)[seq_len(k) >= first])
   {
     if(align=='end')
       start <- n%%mout[i] + 1L

@@ -1,5 +1,4 @@
-thief: Temporal HIErarchical Forecasting <img src="man/figures/logo.png" align="right" />
-======================
+# thief: Temporal HIErarchical Forecasting <img src="man/figures/logo.png" align="right" />
 
 [![Travis-CI Build Status](https://travis-ci.org/robjhyndman/thief.svg?branch=master)](https://travis-ci.org/robjhyndman/thief)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/thief)](https://cran.r-project.org/package=thief)
@@ -14,21 +13,19 @@ This package implements the methods described in
 
 [Athanasopoulos, G., Hyndman, R.J., Kourentzes, N., and Petropoulos, F. (2016) Forecasting with temporal hierarchies.](http://robjhyndman.com/publications/temporal-hierarchies/)
 
-
 ## Installation
-You can install the **stable** version on
-[R CRAN](https://cran.r-project.org/package=thief).
+
+You can install the **stable** version on [R CRAN](https://cran.r-project.org/package=thief).
 
 ```r
 install.packages('thief', dependencies = TRUE)
 ```
 
-You can install the **development** version from
-[Github](https://github.com/robjhyndman/thief)
+You can install the **development** version from [Github](https://github.com/robjhyndman/thief)
 
 ```r
-# install.packages("devtools")
-devtools::install_github("robjhyndman/thief")
+# install.packages("pak")
+pak::pak("robjhyndman/thief")
 ```
 
 ## Usage

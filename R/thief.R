@@ -192,7 +192,7 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
     {
       # Check only 80% PI is saved
       if(is.element(80,fc$level))
-        fc$lower <- fc$lower[,fc$level==80]
+        fc$lower <- as.matrix(fc$lower)[,fc$level==80]
       else
         fc$lower <- NULL
     }

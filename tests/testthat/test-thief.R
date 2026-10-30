@@ -87,3 +87,13 @@ test_that("thief passes ... to theta, naive and snaive", {
     expect_false(isTRUE(all.equal(plain$mean, boxcox$mean)))
   }
 })
+
+test_that("thief handles a forecastfunction returning a single-level lower vector", {
+  f80 <- function(y, h, ...) {
+    fc <- forecast::naive(y, h = h, level = 80)
+    fc$lower <- as.numeric(fc$lower)
+    fc
+  }
+  expect_no_error(z <- thief(USAccDeaths, h = 12, forecastfunction = f80))
+  expect_length(z$mean, 12)
+})

@@ -79,3 +79,11 @@ test_that("the m argument of thief is deprecated", {
   expect_equal(z$mean, thief(USAccDeaths, h = 6, usemodel = "naive")$mean)
   expect_error(suppressWarnings(thief(USAccDeaths, m = 4)), "m must equal frequency")
 })
+
+test_that("thief passes ... to theta, naive and snaive", {
+  for (model in c("theta", "naive", "snaive")) {
+    plain <- thief(USAccDeaths, h = 6, usemodel = model)
+    boxcox <- thief(USAccDeaths, h = 6, usemodel = model, lambda = 0, biasadj = TRUE)
+    expect_false(isTRUE(all.equal(plain$mean, boxcox$mean)))
+  }
+})

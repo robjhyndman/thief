@@ -222,16 +222,16 @@ th.forecast.loop <- function(y, h, usemodel, forecastfunction, ...){
   }
   else if (usemodel == "theta")
   {
-    fc <- forecast::thetaf(y, h=h, level=80)
+    fc <- forecast::thetaf(y, h=h, level=80, ...)
   }
   else
   {
     # Seasonal naive forecast
     if(usemodel=='snaive')
-      fc <- forecast::snaive(y, h=h, level=80)
+      fc <- forecast::snaive(y, h=h, level=80, ...)
     # Naive forecast
     else
-      fc <- forecast::naive(y, h=h, level=80)
+      fc <- forecast::naive(y, h=h, level=80, ...)
   }
 
   # Calculate fitted residuals and MSE

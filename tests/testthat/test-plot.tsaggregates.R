@@ -34,3 +34,11 @@ test_that("mts.from.tsaggregates picks axis labels from the frequency", {
   daily <- tsaggregates(ts(1:28, frequency = 7))
   expect_equal(mts.from.tsaggregates(daily, "all")$args$xlab, "Week")
 })
+
+test_that("a length-1 aggregate is shown as its value, not zero", {
+  y <- ts(c(5, 1:11), frequency = 12)
+  agg <- tsaggregates(y)
+  expect_length(agg$Annual, 1)
+  tsmat <- mts.from.tsaggregates(agg, "all")$tsmat
+  expect_true(all(tsmat[, "Annual"] == sum(y)))
+})

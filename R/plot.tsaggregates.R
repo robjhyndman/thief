@@ -85,6 +85,8 @@ mts.from.tsaggregates <- function(x, series, ...)
     {
       if(length(x[[j]]) > 1L)
         tsmat[,j] <- approx(time(x[[j]]), x[[j]], xout=times)$y
+      else # approx() needs two points, so show the single value as a constant
+        tsmat[,j] <- as.numeric(x[[j]])
     }
   }
   tsmat <- ts(tsmat)

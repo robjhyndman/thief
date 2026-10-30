@@ -65,6 +65,7 @@ test_that("thief validates input", {
   expect_error(thief(1:48), "must be a time series")
   expect_error(thief(AEdemand[, 1:2]), "univariate")
   expect_error(thief(ts(1:48)), "greater than 1")
+  expect_error(thief(USAccDeaths, m = 4), "m must equal frequency")
   expect_error(thief(ts(1:10, frequency = 12)), "at least 2 periods")
   expect_error(thief(USAccDeaths, aggregatelist = c(2, 4)), "aggregatelist must include")
   expect_error(thief(USAccDeaths, comb = "foo"), "should be one of")

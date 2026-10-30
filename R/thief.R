@@ -4,7 +4,7 @@
 #' the temporal hierarchical approach of Athanasopoulos et al (2016).
 #'
 #' @param y        Time series input
-#' @param m        Seasonal period
+#' @param m        Seasonal period. This must equal \code{frequency(y)}, which is the default.
 #' @param h        Forecast horizon
 #' @param comb     Combination method of temporal hierarchies, taking one of the following values:
 #' \describe{
@@ -75,6 +75,10 @@ thief <- function(y, m=frequency(y), h=m*2,
     stop("y must be a time series object")
   if(NCOL(y) > 1L)
     stop("y must be a univariate time series")
+
+  # The aggregates are built from the series itself, so m must match it
+  if(m != frequency(y))
+    stop("m must equal frequency(y). To use a different seasonal period, set the frequency of y using ts()")
 
   # Make sure the time series is seasonal
   if(m <= 1L)

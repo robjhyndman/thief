@@ -11,7 +11,7 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
 \arguments{
 \item{y}{Time series input}
 
-\item{m}{Seasonal period}
+\item{m}{Seasonal period. This must equal \code{frequency(y)}, which is the default.}
 
 \item{h}{Forecast horizon}
 

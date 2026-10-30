@@ -9,9 +9,11 @@ thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
   "snaive"), forecastfunction = NULL, aggregatelist = NULL, ...)
 }
 \arguments{
-\item{y}{Time series input}
+\item{y}{Time series input. A numeric vector is also accepted, in which
+case it is converted to a time series with frequency \code{m}.}
 
-\item{m}{Seasonal period. This must equal \code{frequency(y)}, which is the default.}
+\item{m}{Seasonal period. For a \code{ts} input this must equal
+\code{frequency(y)}, which is the default. It must be given when \code{y} is a numeric vector.}
 
 \item{h}{Forecast horizon}
 

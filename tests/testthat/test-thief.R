@@ -62,7 +62,7 @@ test_that("thief handles AEdemand data", {
 })
 
 test_that("thief validates input", {
-  expect_error(thief(1:48), "must be a time series")
+  expect_error(thief(1:48), "greater than 1")
   expect_error(thief(AEdemand[, 1:2]), "univariate")
   expect_error(thief(ts(1:48)), "greater than 1")
   expect_error(thief(USAccDeaths, m = 4), "m must equal frequency")
@@ -70,4 +70,14 @@ test_that("thief validates input", {
   expect_error(thief(USAccDeaths, aggregatelist = c(2, 4)), "aggregatelist must include")
   expect_error(thief(USAccDeaths, comb = "foo"), "should be one of")
   expect_error(thief(USAccDeaths, usemodel = "foo"), "should be one of")
+})
+
+test_that("thief accepts a numeric vector with m", {
+  set.seed(1)
+  x <- rnorm(60, 100)
+  z <- thief(x, m = 12, h = 6, usemodel = "naive")
+  expect_equal(frequency(z$x), 12)
+  expect_equal(as.numeric(z$x), x)
+  expect_length(z$mean, 6)
+  expect_equal(as.numeric(z$mean), as.numeric(thief(ts(x, frequency = 12), h = 6, usemodel = "naive")$mean))
 })

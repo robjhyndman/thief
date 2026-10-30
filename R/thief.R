@@ -3,8 +3,10 @@
 #' Takes a time series as input and produces forecasts using
 #' the temporal hierarchical approach of Athanasopoulos et al (2016).
 #'
-#' @param y        Time series input
-#' @param m        Seasonal period. This must equal \code{frequency(y)}, which is the default.
+#' @param y        Time series input. A numeric vector is also accepted, in which
+#' case it is converted to a time series with frequency \code{m}.
+#' @param m        Seasonal period. For a \code{ts} input this must equal
+#' \code{frequency(y)}, which is the default. It must be given when \code{y} is a numeric vector.
 #' @param h        Forecast horizon
 #' @param comb     Combination method of temporal hierarchies, taking one of the following values:
 #' \describe{
@@ -70,11 +72,11 @@ thief <- function(y, m=frequency(y), h=m*2,
   else
     usemodel <- deparse(substitute(forecastfunction))
 
-  # Check input is a univariate time series
-  if(!is.element("ts",class(y)))
-    stop("y must be a time series object")
+  # Check input is a univariate time series, or a vector to be turned into one
   if(NCOL(y) > 1L)
     stop("y must be a univariate time series")
+  if(!is.ts(y))
+    y <- ts(y, frequency=m)
 
   # The aggregates are built from the series itself, so m must match it
   if(m != frequency(y))

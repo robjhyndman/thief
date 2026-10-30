@@ -98,6 +98,13 @@ reconcilethief <- function(forecasts,
   k <- rev(order(freq))
   forecasts <- forecasts[k]
   freq <- freq[k]
+  # Keep everything else in the same order
+  if(returnclass == "forecast")
+    origf <- origf[k]
+  if(!is.null(residuals))
+    residuals <- residuals[k]
+  if(!is.null(mse))
+    mse <- mse[k]
 
   # Check series each have same equivalent lengths.
   lengths <- unlist(lapply(forecasts, length))

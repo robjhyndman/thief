@@ -77,3 +77,13 @@ test_that("reconcilethief validates input", {
   expect_error(reconcilethief(fc, comb = "shr"), "GLS needs residuals")
   expect_error(reconcilethief(fc, comb = "foo"), "should be one of")
 })
+
+test_that("reconcilethief does not depend on the order of the input list", {
+  fc <- make_fc()
+  mse <- vapply(fc, function(f) mean(residuals(f)^2), numeric(1))
+  for (comb in c("struc", "mse")) {
+    expect_no_warning(rec <- reconcilethief(fc, comb = comb, mse = mse))
+    expect_no_warning(rec2 <- reconcilethief(rev(fc), comb = comb, mse = rev(mse)))
+    expect_equal(rec2, rec)
+  }
+})

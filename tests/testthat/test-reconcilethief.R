@@ -87,3 +87,7 @@ test_that("reconcilethief does not depend on the order of the input list", {
     expect_equal(rec2, rec)
   }
 })
+
+test_that("reconcilethief gives a clear error when comb = 'mse' has no mse", {
+  expect_error(reconcilethief(make_fc(), comb = "mse"), "needs the mse argument")
+})

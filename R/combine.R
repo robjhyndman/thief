@@ -59,6 +59,8 @@ reconcilethief <- function(forecasts,
                aggregatelist=NULL)
 {
   comb <- match.arg(comb)
+  if(comb == "mse" && is.null(mse))
+    stop("comb = \"mse\" needs the mse argument")
 
   # If forecasts is a list of forecast objects, then
   # extract list of forecast time series and list of residual time series

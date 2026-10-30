@@ -4,16 +4,14 @@
 \alias{thief}
 \title{Temporal hierarchical forecasting}
 \usage{
-thief(y, m = frequency(y), h = m * 2, comb = c("struc", "mse", "ols",
+thief(y, m = NULL, h = frequency(y) * 2, comb = c("struc", "mse", "ols",
   "bu", "shr", "sam"), usemodel = c("ets", "arima", "theta", "naive",
   "snaive"), forecastfunction = NULL, aggregatelist = NULL, ...)
 }
 \arguments{
-\item{y}{Time series input. A numeric vector is also accepted, in which
-case it is converted to a time series with frequency \code{m}.}
+\item{y}{Time series input. The seasonal period is \code{frequency(y)}.}
 
-\item{m}{Seasonal period. For a \code{ts} input this must equal
-\code{frequency(y)}, which is the default. It must be given when \code{y} is a numeric vector.}
+\item{m}{Deprecated. The seasonal period is always taken from \code{frequency(y)}.}
 
 \item{h}{Forecast horizon}
 

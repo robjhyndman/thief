@@ -37,7 +37,8 @@
 #' are returned.
 #'
 #' @return
-#'   forecast object.
+#'   forecast object. It contains the reconciled point forecasts (\code{mean}),
+#'   fitted values and residuals, but no prediction intervals.
 #'
 #' @seealso \code{\link{reconcilethief}}
 #'

@@ -44,7 +44,8 @@ as the second argument. It must return an object of class \code{forecast}.}
 (such as \code{ets} or \code{auto.arima}), or to \code{forecastfunction}.}
 }
 \value{
-forecast object.
+forecast object. It contains the reconciled point forecasts (\code{mean}),
+fitted values and residuals, but no prediction intervals.
 }
 \description{
 Takes a time series as input and produces forecasts using

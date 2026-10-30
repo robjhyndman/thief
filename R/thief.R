@@ -71,7 +71,7 @@ thief <- function(y, m=NULL, h=frequency(y)*2,
     usemodel <- deparse(substitute(forecastfunction))
 
   # Check input is a univariate time series
-  if(!is.element("ts",class(y)))
+  if(!inherits(y,"ts"))
     stop("y must be a time series object")
   if(NCOL(y) > 1L)
     stop("y must be a univariate time series")

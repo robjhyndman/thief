@@ -104,5 +104,4 @@ for (i in seq_along(fc))
   plot(reconciled[[i]], main = names(aggts)[i])
   lines(fc[[i]]$mean, col = "red")
 }
-
 ```

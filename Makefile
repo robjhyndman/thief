@@ -18,7 +18,7 @@ install:
 	rmake
 
 pkgdown:
-	Rscript -e "rt::rdoc(); rt::rpkgdown()"
+	FONTCONFIG_FILE=$(CURDIR)/pkgdown/fonts.conf Rscript -e "rt::rdoc(); rt::rpkgdown()"
 
 winbuild:
 	Rscript -e "rt::rwinbuild(devel=TRUE)"

@@ -56,7 +56,6 @@
 #' z <- thief(AEdemand[, 12], forecastfunction = ftbats)
 #' plot(z)
 #' }
-#'
 #' @export
 #' @import forecast
 #' @author Rob J Hyndman and Nikolaos Kourentzes

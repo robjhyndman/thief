@@ -16,7 +16,6 @@
 #'
 #' library(ggplot2)
 #' autoplot(deathagg)
-#'
 #' @author Rob J Hyndman
 #' @export
 #' @importFrom stats plot.ts

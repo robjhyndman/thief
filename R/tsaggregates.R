@@ -16,7 +16,6 @@
 #'
 #' @examples
 #' tsaggregates(USAccDeaths)
-#'
 #' @author Rob J Hyndman
 #' @export
 

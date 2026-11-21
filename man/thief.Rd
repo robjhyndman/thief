@@ -79,7 +79,6 @@ ftbats <- function(y, h, ...) {
 z <- thief(AEdemand[, 12], forecastfunction = ftbats)
 plot(z)
 }
-
 }
 \seealso{
 \code{\link[=reconcilethief]{reconcilethief()}}

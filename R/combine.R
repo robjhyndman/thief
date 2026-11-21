@@ -50,7 +50,6 @@
 #'   plot(reconciled[[i]], main = names(aggts)[i])
 #'   lines(fc[[i]]$mean, col = "red")
 #' }
-#'
 #' @export
 #' @author Rob J Hyndman
 

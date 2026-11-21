@@ -32,7 +32,6 @@ Produces all temporal aggregations for frequencies greater than 1
 }
 \examples{
 tsaggregates(USAccDeaths)
-
 }
 \seealso{
 \code{\link[=plot.tsaggregates]{plot.tsaggregates()}}

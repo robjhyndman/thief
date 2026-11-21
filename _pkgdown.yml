@@ -1,11 +1,9 @@
 url: http://robjhyndman.github.io/thief
 template:
   bootstrap: 5
-  theme: tango
   bootswatch: flatly
   bslib:
     base_font: {google: "Fira Sans"}
-    heading_font: {google: "Fira Sans"}
     code_font: "Hack, mono"
     primary: "#234460"
     link-color: "#234460"
@@ -19,14 +17,6 @@ authors:
     href: http://kourentzes.com/forecasting/
 navbar:
   type: light
-  left:
-  - text: Reference
-    href: reference/index.html
-  - text: Change Log
-    href: news/index.html
-  right:
-  - icon: fa-github fa-lg
-    href: https://github.com/robjhyndman/thief
 reference:
 - title: Main function
   desc: Produce forecasts using the THieF method
